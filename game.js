@@ -62,6 +62,15 @@
       profile: { hunger: 1.4, thirst: 1.05, hygiene: 1.8, love: 1.1, energy: 0.9, growthMs: 44_000 },
     },
     {
+      id: "mole", ready: true, name: "Toupeira", he: "ela", names: ["Toty"],
+      food: "🍄", foodName: "cogumelinho", glow: "rgba(210,170,120,.6)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "dig"], skit: "dig",
+      sleepStages: ["child", "adult"],
+      trait: "adora cavar e fica sujinha de terra",
+      profile: { hunger: 1.15, thirst: 1.0, hygiene: 1.65, love: 1.2, energy: 1.1, growthMs: 47_000 },
+    },
+    {
       id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
       food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
@@ -506,6 +515,18 @@
         playMove("splat", 600);
         rain(["⭐", "💫"], 3, "float", 20);
         say("Ops! Escorreguei! 🙈", 1800);
+        await wait(1800);
+      } else if (kind === "dig") {
+        state.pose = "dig"; renderActor();
+        say("Vou cavar! 🕳️", 1500);
+        await playMove("wobble", 1600);
+        rain(["🟤", "✨", "🍄"], 6);
+        say("Achado! Hihi", 1600);
+        await wait(1600);
+        state.pose = "fall"; renderActor();
+        playMove("splat", 600);
+        rain(["⭐", "💫"], 3, "float", 20);
+        say("Ops! Cavei demais! 🙈", 1800);
         await wait(1800);
       } else if (kind === "rear") {
         say("Iiiirrí! 🌈", 1600);
