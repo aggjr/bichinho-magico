@@ -17,200 +17,211 @@
   // growthMs: tempo base por fase (já mais lento para a criança aproveitar)
   const SPECIES = [
     {
-      id: "unicorn", ready: true, name: "Unicórnio", he: "ela", names: ["Luna"],
+      id: "unicorn", audience: "girl", ready: true, name: "Unicórnio", he: "ela", names: ["Luna"],
       food: "🍓", foodName: "morango", glow: "rgba(230,180,255,.6)",
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall"], skit: "wobble", adultSkit: "rear",
+      poses: ["plead", "eat", "sleep", "fall", "mad", "sad", "scratch", "sleepy"], skit: "wobble", adultSkit: "rear",
       sleepStages: ["child", "adult"],
       focus: ["love", "energy"],
       profile: { hunger: 0.9, thirst: 0.9, hygiene: 0.75, love: 1.2, energy: 1.05, growthMs: 80_000 },
     },
     {
-      id: "dino", ready: true, name: "Dinossauro", he: "ele", names: ["Freely"],
+      id: "dino", audience: "both", ready: true, name: "Dinossauro", he: "ele", names: ["Freely"],
       food: "🍉", foodName: "melancia", glow: "rgba(170,255,190,.55)",
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
+      poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"], skit: "fly", childSkit: "fly",
       sleepStages: ["child", "adult"],
       focus: ["hunger", "thirst"],
       profile: { hunger: 1.15, thirst: 1.05, hygiene: 1.0, love: 0.95, energy: 1.0, growthMs: 70_000 },
     },
     {
-      id: "kitty", ready: true, name: "Gatinho", he: "ele", names: ["Flofy"],
+      id: "kitty", audience: "both", ready: true, name: "Gatinho", he: "ele", names: ["Flofy"],
       food: "🐟", foodName: "peixinho", glow: "rgba(255,190,120,.6)",
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "child" },
-      poses: ["plead", "eat", "sleep", "fall", "bed"], skit: "bed",
+      poses: ["plead", "eat", "sleep", "fall", "bed", "mad", "sad", "scratch", "sleepy"], skit: "bed",
       sleepStages: ["child"],
       focus: ["love", "energy"],
       profile: { hunger: 0.95, thirst: 0.9, hygiene: 0.85, love: 1.15, energy: 1.1, growthMs: 75_000 },
     },
     {
-      id: "duck", ready: true, name: "Patinho", he: "ele", names: ["Tobi"],
+      id: "duck", audience: "both", ready: true, name: "Patinho", he: "ele", names: ["Tobi"],
       food: "🌽", foodName: "milhinho", glow: "rgba(255,230,100,.65)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
+      poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"], skit: "fly", childSkit: "fly",
       sleepStages: ["child", "adult"],
       focus: ["thirst", "hygiene"],
       profile: { hunger: 1.0, thirst: 1.15, hygiene: 1.1, love: 1.0, energy: 0.95, growthMs: 72_000 },
     },
     {
-      id: "pig", ready: true, name: "Porquinho", he: "ele", names: ["Pigma"],
+      id: "pig", audience: "both", ready: true, name: "Porquinho", he: "ele", names: ["Pigma"],
       food: "🍎", foodName: "maçã", glow: "rgba(255,190,170,.65)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "mud"], skit: "mud",
+      poses: ["plead", "eat", "sleep", "fall", "mud", "mad", "sad", "scratch", "sleepy"], skit: "mud",
       sleepStages: ["child", "adult"],
       focus: ["hygiene", "hunger"],
       profile: { hunger: 1.1, thirst: 1.0, hygiene: 1.2, love: 1.0, energy: 0.9, growthMs: 74_000 },
     },
     {
-      id: "mole", ready: true, name: "Toupeira", he: "ela", names: ["Toty"],
+      id: "mole", audience: "both", ready: true, name: "Toupeira", he: "ela", names: ["Toty"],
       food: "🍄", foodName: "cogumelinho", glow: "rgba(210,170,120,.6)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "dig"], skit: "dig",
+      poses: ["plead", "eat", "sleep", "fall", "dig", "mad", "sad", "scratch", "sleepy"], skit: "dig",
       sleepStages: ["child", "adult"],
       focus: ["hygiene", "love"],
       profile: { hunger: 1.05, thirst: 1.0, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
     },
     {
-      id: "bat", ready: true, name: "Morceguinho", he: "ele", names: ["Smytyi"],
+      id: "bat", audience: "both", ready: true, name: "Morceguinho", he: "ele", names: ["Smytyi"],
       food: "🫐", foodName: "mirtilinho", glow: "rgba(160,140,220,.65)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly", adultSkit: "fly",
+      poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"],
+      skit: "fly", childSkit: "fly", adultSkit: "fly",
       sleepStages: ["child", "adult"],
       focus: ["energy", "love"],
       profile: { hunger: 1.05, thirst: 1.0, hygiene: 0.95, love: 1.15, energy: 1.2, growthMs: 76_000 },
     },
     {
-      id: "racer", ready: true, name: "Carrinho", he: "ele", names: ["Turbo"],
+      id: "seal", audience: "girl", ready: true, name: "Foquinha", he: "ela", names: ["Flokinha"],
+      food: "🐟", foodName: "peixinho", glow: "rgba(180,220,255,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "splash", "mad", "sad", "scratch", "sleepy"],
+      skit: "splash", childSkit: "splash", adultSkit: "splash",
+      sleepStages: ["child", "adult"],
+      focus: ["love", "hygiene"],
+      profile: { hunger: 1.1, thirst: 1.05, hygiene: 1.1, love: 1.2, energy: 0.95, growthMs: 74_000 },
+    },
+    {
+      id: "racer", audience: "boy", ready: true, name: "Carrinho", he: "ele", names: ["Turbo"],
       food: "🔧", foodName: "peçinhas", glow: "rgba(255,120,100,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "turbo"], skit: "turbo", childSkit: "turbo", adultSkit: "turbo",
+      poses: ["plead", "eat", "sleep", "fall", "turbo", "mad", "sad", "scratch", "sleepy"], skit: "turbo", childSkit: "turbo", adultSkit: "turbo",
       sleepStages: ["child", "adult"],
       focus: ["hunger", "thirst"],
       profile: { hunger: 1.2, thirst: 1.25, hygiene: 1.1, love: 1.0, energy: 1.05, growthMs: 78_000 },
     },
     {
-      id: "botcar", ready: true, name: "Transformers", he: "ele", names: ["Bolt"],
+      id: "botcar", audience: "boy", ready: true, name: "Transformers", he: "ele", names: ["Bolt"],
       food: "🔩", foodName: "parafusos", glow: "rgba(120,180,255,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "car"], skit: "transform", childSkit: "transform", adultSkit: "transform",
+      poses: ["plead", "eat", "sleep", "fall", "car", "mad", "sad", "scratch", "sleepy"], skit: "transform", childSkit: "transform", adultSkit: "transform",
       sleepStages: ["child", "adult"],
       focus: ["hunger", "energy"],
       profile: { hunger: 1.15, thirst: 1.2, hygiene: 0.85, love: 0.95, energy: 1.15, growthMs: 82_000 },
     },
     {
-      id: "rocket", ready: true, name: "Foguete", he: "ele", names: ["Foguinho"],
+      id: "rocket", audience: "boy", ready: true, name: "Foguete", he: "ele", names: ["Foguinho"],
       food: "🔧", foodName: "peçinhas", glow: "rgba(255,140,100,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "launch"], skit: "launch", childSkit: "launch", adultSkit: "launch",
+      poses: ["plead", "eat", "sleep", "fall", "launch", "mad", "sad", "scratch", "sleepy"], skit: "launch", childSkit: "launch", adultSkit: "launch",
       focus: ["hunger", "energy"],
       profile: { hunger: 1.15, thirst: 1.2, hygiene: 0.9, love: 1.0, energy: 1.2, growthMs: 80_000 },
     },
     {
-      id: "heli", ready: true, name: "Helicóptero", he: "ele", names: ["Hélio"],
+      id: "heli", audience: "boy", ready: true, name: "Helicóptero", he: "ele", names: ["Hélio"],
       food: "🔩", foodName: "parafusos", glow: "rgba(100,180,255,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "hover"], skit: "hover", childSkit: "hover", adultSkit: "hover",
+      poses: ["plead", "eat", "sleep", "fall", "hover", "mad", "sad", "scratch", "sleepy"], skit: "hover", childSkit: "hover", adultSkit: "hover",
       focus: ["thirst", "energy"],
       profile: { hunger: 1.1, thirst: 1.2, hygiene: 1.0, love: 1.0, energy: 1.15, growthMs: 78_000 },
     },
     {
-      id: "train", ready: true, name: "Trem", he: "ele", names: ["Chuflinho"],
+      id: "train", audience: "boy", ready: true, name: "Trem", he: "ele", names: ["Chuflinho"],
       food: "🔧", foodName: "peçinhas", glow: "rgba(255,100,100,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "chug"], skit: "chug", childSkit: "chug", adultSkit: "chug",
+      poses: ["plead", "eat", "sleep", "fall", "chug", "mad", "sad", "scratch", "sleepy"], skit: "chug", childSkit: "chug", adultSkit: "chug",
       focus: ["hunger", "thirst"],
       profile: { hunger: 1.2, thirst: 1.15, hygiene: 1.05, love: 0.95, energy: 1.1, growthMs: 82_000 },
     },
     {
-      id: "tractor", ready: true, name: "Trator", he: "ele", names: ["Toto"],
+      id: "tractor", audience: "boy", ready: true, name: "Trator", he: "ele", names: ["Toto"],
       food: "🔩", foodName: "parafusos", glow: "rgba(255,180,80,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "plough"], skit: "plough", childSkit: "plough", adultSkit: "plough",
+      poses: ["plead", "eat", "sleep", "fall", "plough", "mad", "sad", "scratch", "sleepy"], skit: "plough", childSkit: "plough", adultSkit: "plough",
       focus: ["hygiene", "hunger"],
       profile: { hunger: 1.15, thirst: 1.15, hygiene: 1.25, love: 1.0, energy: 1.05, growthMs: 80_000 },
     },
     {
-      id: "boat", ready: true, name: "Barco", he: "ele", names: ["Marinho"],
+      id: "boat", audience: "boy", ready: true, name: "Barco", he: "ele", names: ["Marinho"],
       food: "🔧", foodName: "peçinhas", glow: "rgba(80,200,200,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "sail"], skit: "sail", childSkit: "sail", adultSkit: "sail",
+      poses: ["plead", "eat", "sleep", "fall", "sail", "mad", "sad", "scratch", "sleepy"], skit: "sail", childSkit: "sail", adultSkit: "sail",
       focus: ["thirst", "hygiene"],
       profile: { hunger: 1.05, thirst: 1.2, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
     },
     {
-      id: "plane", ready: true, name: "Avião", he: "ele", names: ["Asinha"],
+      id: "plane", audience: "boy", ready: true, name: "Avião", he: "ele", names: ["Asinha"],
       food: "🔩", foodName: "parafusos", glow: "rgba(120,190,255,.65)",
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "loop"], skit: "loop", childSkit: "loop", adultSkit: "loop",
+      poses: ["plead", "eat", "sleep", "fall", "loop", "mad", "sad", "scratch", "sleepy"], skit: "loop", childSkit: "loop", adultSkit: "loop",
       focus: ["energy", "hunger"],
       profile: { hunger: 1.1, thirst: 1.15, hygiene: 0.95, love: 1.0, energy: 1.2, growthMs: 78_000 },
     },
     {
-      id: "slime", ready: true, name: "Slime", he: "ele", names: ["Goo"],
+      id: "slime", audience: "both", ready: true, name: "Slime", he: "ele", names: ["Goo"],
       food: "🍮", foodName: "geleinha", glow: "rgba(120,200,255,.65)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "bounce"], skit: "bounce", childSkit: "bounce", adultSkit: "bounce",
+      poses: ["plead", "eat", "sleep", "bounce", "mad", "sad", "scratch", "sleepy"], skit: "bounce", childSkit: "bounce", adultSkit: "bounce",
       focus: ["hunger", "love"],
       profile: { hunger: 1.2, thirst: 1.1, hygiene: 0.7, love: 1.15, energy: 1.05, growthMs: 74_000 },
       variants: {
-        blue: { he: "ele", names: ["Azulito", "Goo"], glow: "rgba(100,180,255,.65)" },
-        green: { he: "ele", names: ["Verde", "Blob"], glow: "rgba(90,210,120,.65)" },
-        pink: { he: "ela", names: ["Rosa", "Melly"], glow: "rgba(255,150,200,.65)" },
-        lilac: { he: "ela", names: ["Lila", "Puff"], glow: "rgba(200,160,255,.65)" },
+        blue: { he: "ele", names: ["Azulito", "Goo"], glow: "rgba(100,180,255,.65)", audience: "boy" },
+        green: { he: "ele", names: ["Verde", "Blob"], glow: "rgba(90,210,120,.65)", audience: "boy" },
+        pink: { he: "ela", names: ["Rosa", "Melly"], glow: "rgba(255,150,200,.65)", audience: "girl" },
+        lilac: { he: "ela", names: ["Lila", "Puff"], glow: "rgba(200,160,255,.65)", audience: "girl" },
       },
     },
     {
-      id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
+      id: "bunny", audience: "girl", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
       food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
       focus: ["hunger", "love"],
       profile: { hunger: 1.15, thirst: 1.0, hygiene: 0.8, love: 1.1, energy: 1.0, growthMs: 70_000 },
     },
     {
-      id: "robot", name: "Robôzinho", he: "ele", names: ["Bip", "Chip"],
+      id: "robot", audience: "boy", name: "Robôzinho", he: "ele", names: ["Bip", "Chip"],
       food: "🔋", foodName: "bateria", glow: "rgba(120,240,255,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
       focus: ["hunger", "energy"],
       profile: { hunger: 1.2, thirst: 0.5, hygiene: 0.4, love: 0.9, energy: 1.15, growthMs: 78_000 },
     },
     {
-      id: "hamster", name: "Hamster", he: "ele", names: ["Bolinha", "Paçoca"],
+      id: "hamster", audience: "both", name: "Hamster", he: "ele", names: ["Bolinha", "Paçoca"],
       food: "🌻", foodName: "semente", glow: "rgba(255,210,140,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
       focus: ["hunger", "energy"],
       profile: { hunger: 1.2, thirst: 1.05, hygiene: 1.0, love: 1.05, energy: 1.1, growthMs: 68_000 },
     },
     {
-      id: "panda", name: "Panda", he: "ele", names: ["Mochi", "Bambu"],
+      id: "panda", audience: "both", name: "Panda", he: "ele", names: ["Mochi", "Bambu"],
       food: "🎋", foodName: "bambu", glow: "rgba(255,255,255,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
       focus: ["hunger", "energy"],
       profile: { hunger: 1.2, thirst: 1.0, hygiene: 0.9, love: 1.0, energy: 1.1, growthMs: 90_000 },
     },
     {
-      id: "puppy", name: "Cachorrinho", he: "ele", names: ["Mel", "Toby"],
+      id: "puppy", audience: "both", name: "Cachorrinho", he: "ele", names: ["Mel", "Toby"],
       food: "🦴", foodName: "ossinho", glow: "rgba(255,210,150,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
       focus: ["love", "energy"],
       profile: { hunger: 1.05, thirst: 1.05, hygiene: 1.05, love: 1.2, energy: 1.1, growthMs: 72_000 },
     },
     {
-      id: "dragon", name: "Dragãozinho", he: "ele", names: ["Faísca", "Draco"],
+      id: "dragon", audience: "boy", name: "Dragãozinho", he: "ele", names: ["Faísca", "Draco"],
       food: "🌶️", foodName: "pimentinha", glow: "rgba(255,150,120,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
       focus: ["hunger", "thirst"],
       profile: { hunger: 1.25, thirst: 1.2, hygiene: 1.0, love: 1.0, energy: 1.05, growthMs: 85_000 },
     },
     {
-      id: "fox", name: "Raposinha", he: "ela", names: ["Canela", "Floco"],
+      id: "fox", audience: "girl", name: "Raposinha", he: "ela", names: ["Canela", "Floco"],
       food: "🫐", foodName: "frutinha", glow: "rgba(255,170,90,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
       focus: ["energy", "hunger"],
@@ -288,6 +299,7 @@
     strongTraits: [],
     hatchBag: [],
     variant: null,
+    audience: null,
     dayStart: performance.now(), lastGrowth: performance.now(), last: performance.now(),
     fxTimer: 0, preview: null,
   };
@@ -296,14 +308,20 @@
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
+  function matchesAudience(sp, audience) {
+    if (!audience || audience === "both") return true;
+    const a = sp.audience || "both";
+    return a === "both" || a === audience;
+  }
+
   function readySpecies() {
-    return SPECIES.filter((s) => s.ready);
+    return SPECIES.filter((s) => s.ready && matchesAudience(s, state.audience));
   }
 
   // Sorteio justo: todos os bichinhos liberados saem uma vez antes de repetir.
   function pickHatchSpecies() {
     const ready = readySpecies();
-    if (!ready.length) return SPECIES[0];
+    if (!ready.length) return SPECIES.find((s) => s.ready) || SPECIES[0];
     if (!state.hatchBag.length) {
       state.hatchBag = ready.map((s) => s.id);
       // Embaralha
@@ -321,8 +339,27 @@
 
   try {
     const saved = JSON.parse(localStorage.getItem("bichinho-hatch-bag") || "[]");
-    if (Array.isArray(saved)) state.hatchBag = saved.filter((id) => readySpecies().some((s) => s.id === id));
+    if (Array.isArray(saved)) state.hatchBag = saved;
   } catch (_) { /* ignore */ }
+
+  function setAudience(audience, { resetBag = true } = {}) {
+    state.audience = audience;
+    try {
+      localStorage.setItem("bichinho-audience", audience);
+      if (resetBag) {
+        localStorage.removeItem("bichinho-hatch-bag");
+        state.hatchBag = [];
+      }
+    } catch (_) { /* ignore */ }
+  }
+
+  function loadAudience() {
+    try {
+      const a = localStorage.getItem("bichinho-audience");
+      if (a === "boy" || a === "girl" || a === "both") return a;
+    } catch (_) { /* ignore */ }
+    return null;
+  }
 
   function rollStrongTraits(sp) {
     const pool = [...(sp.focus || ["hunger", "love"])];
@@ -386,7 +423,7 @@
   function hasPose(pose) {
     if (!state.species?.poses?.includes(pose)) return false;
     // Poses especiais de máquina / slime valem em qualquer fase
-    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce"].includes(pose)) return true;
+    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce", "splash", "mad", "sad", "scratch", "sleepy"].includes(pose)) return true;
     return state.stage === 1;
   }
   function artKey(sp) {
@@ -405,7 +442,26 @@
   }
   function wantsSomething() {
     const n = state.needs;
-    return n.hunger < 40 || n.thirst < 40 || n.love < 40 || n.hygiene < 30;
+    return n.hunger < 40 || n.thirst < 40 || n.love < 40 || n.hygiene < 30 || n.energy < 30;
+  }
+  function expressionPose() {
+    if (state.busy || state.sleeping || !state.species) return null;
+    const n = state.needs;
+    const has = (p) => state.species.poses.includes(p);
+    // Nervoso: cara brava
+    if (state.mood === "mad" && has("mad")) return "mad";
+    // Prioriza a necessidade mais baixa com pose específica
+    const order = ["hygiene", "energy", "love", "hunger", "thirst"];
+    const worst = order.slice().sort((a, b) => n[a] - n[b])[0];
+    if (n[worst] < 40) {
+      if (worst === "hygiene" && has("scratch")) return "scratch"; // se coçando, quer banho
+      if (worst === "energy" && has("sleepy")) return "sleepy"; // olhos pesados
+      if (worst === "love" && has("sad")) return "sad"; // triste / chorando
+      if ((worst === "hunger" || worst === "thirst") && has("plead")) return "plead";
+    }
+    if (state.mood === "sad" && has("sad")) return "sad";
+    if (wantsSomething() && has("plead")) return "plead";
+    return null;
   }
   function currentArt() {
     const sp = state.species;
@@ -415,7 +471,8 @@
       if (s) return s;
     }
     if (state.pose && hasPose(state.pose)) return `${ART}${ak}_${state.pose}.webp`;
-    if (!state.busy && state.mood !== "mad" && wantsSomething() && hasPose("plead")) return `${ART}${ak}_plead.webp`;
+    const expr = expressionPose();
+    if (expr) return `${ART}${ak}_${expr}.webp`;
     return baseArt(sp, state.stage);
   }
   function preload(sp) {
@@ -437,7 +494,12 @@
     const q = new URLSearchParams(location.search);
     const forced = q.get("color") || q.get("variant");
     if (forced && sp.variants[forced]) return forced;
-    return pick(Object.keys(sp.variants));
+    const keys = Object.keys(sp.variants).filter((k) => {
+      const va = sp.variants[k].audience || "both";
+      if (!state.audience || state.audience === "both") return true;
+      return va === "both" || va === state.audience;
+    });
+    return pick(keys.length ? keys : Object.keys(sp.variants));
   }
   function applyVariant(sp, variant) {
     state.variant = variant;
@@ -644,6 +706,7 @@
 
   function updateGuide() {
     if (state.phase === "egg") {
+      if (!state.audience) return setGuide("Primeiro escolhe: menina, menino ou tanto faz! ✨");
       const t = state.temp;
       if (t > DEMO.idealMax + 4) return setGuide("Muito quente! Pare de esfregar ✋", null, null, true);
       if (t >= DEMO.idealMin) {
@@ -661,13 +724,16 @@
       const day = el.app.dataset.period === "day";
       return setGuide(day && state.needs.energy > 90 ? `${p} já descansou! Aperte ☀️ Acordar` : `Shhh… ${p} está dormindo 💤`, day && state.needs.energy > 90 ? "1" : null);
     }
-    if (state.mood === "mad") return setGuide(`${p} está nervoso! Cuida dele agora! 💢`, null, "😤", true);
+    if (state.mood === "mad") return setGuide(`${p} está nervoso! Olha a carinha dele — cuida agora! 💢`, null, "😤", true);
     if (state.mood === "sad") {
       const n = state.needs;
       const worst = ["hunger", "thirst", "hygiene", "love", "energy"].sort((a, b) => n[a] - n[b])[0];
       const need = needsMap()[worst];
       const icon = worst === "hunger" ? state.species.food : need.icon;
-      const sadHunger = isMachine() ? `Quer ${state.species.foodName}!` : `Quer ${state.species.foodName}!`;
+      if (worst === "hygiene") return setGuide(`${p} está se coçando… Quer banho! 🛁`, "4", "🛁", true);
+      if (worst === "love") return setGuide(`${p} está chorando… Quer carinho! 💗`, "5", "💗", true);
+      if (worst === "energy") return setGuide(`${p} está com os olhinhos pesados… Aperte 🌙 Dormir`, "6", "🌙", true);
+      const sadHunger = `Quer ${state.species.foodName}!`;
       return setGuide(`${p} está triste… ${worst === "hunger" ? sadHunger : need.text(p)}`, need.key, icon, true);
     }
 
@@ -834,6 +900,14 @@
         await playMove("rear", 900);
         rain(["✨", "💜", "💚", "💙"], 10);
         say("Sou todinho gelinho!", 1600);
+        await wait(1400);
+      } else if (kind === "splash") {
+        state.pose = state.species.poses.includes("splash") ? "splash" : null;
+        renderActor();
+        say("Splash splash! 🦭", 1500);
+        await playMove("wobble", 1200);
+        rain(["💧", "🌊", "✨"], 10);
+        say("Água geladinha! Hihi", 1600);
         await wait(1400);
       } else if (kind === "rear") {
         say("Iiiirrí! 🌈", 1600);
@@ -1069,6 +1143,9 @@
     if (!tick.c || now - tick.c > 300) { tick.c = now; updateClock(); updateGuide(); }
 
     if (state.phase === "egg" && !state.preview) {
+      if (!state.audience) {
+        renderEgg();
+      } else {
       state.temp = clamp(state.temp + (state.rubbing ? 20 : -7) * dt, 10, 100);
       const ideal = state.temp >= DEMO.idealMin && state.temp <= DEMO.idealMax;
       state.idealMs = ideal ? state.idealMs + dt * 1000 : Math.max(0, state.idealMs - dt * 600);
@@ -1080,6 +1157,7 @@
       else if (pct < 0.2) setEggCrack(0, false);
       renderEgg();
       if (state.idealMs >= DEMO.hatchSeconds * 1000) hatch(state.forceSpecies);
+      }
     } else if (state.phase === "pet") {
       if (!state.preview) {
         const rates = decayRates();
@@ -1144,6 +1222,7 @@
   }
   function setRub(on) {
     if (state.phase !== "egg") return;
+    if (!state.audience) return;
     state.rubbing = on;
     el.actor.classList.toggle("rubbing", on);
   }
@@ -1152,7 +1231,10 @@
     if (e.repeat) return;
     if (/^[1-6]$/.test(e.key)) press(e.key);
     if (e.key === "0") {
-      try { localStorage.removeItem("bichinho-hatch-bag"); } catch (_) {}
+      try {
+        localStorage.removeItem("bichinho-hatch-bag");
+        localStorage.removeItem("bichinho-audience");
+      } catch (_) {}
       location.href = "index.html";
       return;
     }
@@ -1220,6 +1302,23 @@
     if (q.get("say")) say(q.get("say"), 1e9);
   }
 
+  // ---------- Audience pick ----------
+  const elAudience = document.getElementById("audiencePick");
+  function hideAudiencePick() {
+    if (elAudience) elAudience.hidden = true;
+  }
+  function showAudiencePick() {
+    if (elAudience) elAudience.hidden = false;
+  }
+  function beginGameWithAudience(audience) {
+    setAudience(audience, { resetBag: true });
+    hideAudiencePick();
+    say(audience === "girl" ? "Um PIXEL especial pra menina! 💕" : audience === "boy" ? "Um PIXEL especial pra menino! 🚀" : "Qualquer PIXEL pode nascer! ✨", 2600);
+  }
+  elAudience?.querySelectorAll("[data-audience]").forEach((btn) => {
+    btn.addEventListener("click", () => beginGameWithAudience(btn.dataset.audience));
+  });
+
   resizeFx();
   ["egg", "egg_crack1", "egg_crack2", "egg_crack3", "egg_broken"].forEach((n) => {
     const i = new Image();
@@ -1229,6 +1328,27 @@
   renderEgg();
   renderGrowth();
   applyPreview();
-  if (!state.preview) say("Tem um ovinho aqui! 🥚", 3000);
+
+  const qBoot = new URLSearchParams(location.search);
+  const forcedAud = qBoot.get("audience");
+  if (forcedAud === "boy" || forcedAud === "girl" || forcedAud === "both") {
+    setAudience(forcedAud, { resetBag: false });
+  } else {
+    state.audience = loadAudience();
+  }
+  // Preview/hatch direto pula a pergunta
+  if (state.preview || qBoot.get("hatch") != null || qBoot.get("species")) {
+    if (!state.audience) state.audience = "both";
+    hideAudiencePick();
+  } else if (!state.audience) {
+    showAudiencePick();
+  } else {
+    hideAudiencePick();
+  }
+  // Filtra bag salva pelo público atual
+  state.hatchBag = (state.hatchBag || []).filter((id) => readySpecies().some((s) => s.id === id));
+
+  if (!state.preview && state.audience) say("Tem um ovinho aqui! 🥚", 3000);
+  else if (!state.preview && !state.audience) say("Escolhe pra quem é o PIXEL! ✨", 4000);
   requestAnimationFrame(tick);
 })();
