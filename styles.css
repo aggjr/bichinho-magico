@@ -344,13 +344,29 @@ kbd {
 @keyframes egg-idle { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
 .actor.rubbing .actor-img { animation: egg-rub 0.18s ease-in-out infinite; }
 @keyframes egg-rub { 0%, 100% { transform: rotate(-3deg) scale(1.01); } 50% { transform: rotate(3deg) scale(0.99); } }
-.actor.hatching .actor-img { animation: egg-hatch 1.2s ease-in forwards; }
-@keyframes egg-hatch {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.06) rotate(-6deg); }
-  50% { transform: scale(1.06) rotate(6deg); }
-  70% { transform: scale(1.12) rotate(-8deg); }
-  100% { transform: scale(1.5); opacity: 0; filter: brightness(3) blur(6px); }
+
+.actor.crack-shake .actor-img { animation: egg-crack-shake 0.45s ease-in-out; }
+@keyframes egg-crack-shake {
+  0%, 100% { transform: rotate(0) scale(1); }
+  20% { transform: rotate(-6deg) translateX(-2%) scale(1.02); }
+  40% { transform: rotate(7deg) translateX(2%); }
+  60% { transform: rotate(-5deg) scale(1.04); }
+  80% { transform: rotate(4deg); }
+}
+
+.actor.hatching .actor-img { animation: egg-hatch-pulse 0.7s ease-in-out infinite; }
+@keyframes egg-hatch-pulse {
+  0%, 100% { transform: scale(1) rotate(-2deg); filter: brightness(1); }
+  50% { transform: scale(1.06) rotate(2deg); filter: brightness(1.25); }
+}
+
+.actor.hatch-burst .actor-img {
+  animation: egg-burst 0.9s ease-out forwards;
+}
+@keyframes egg-burst {
+  0% { transform: scale(1); filter: brightness(1); opacity: 1; }
+  40% { transform: scale(1.15); filter: brightness(2.2); opacity: 1; }
+  100% { transform: scale(1.4); filter: brightness(4) blur(8px); opacity: 0; }
 }
 
 /* ---------- Speech bubble ---------- */

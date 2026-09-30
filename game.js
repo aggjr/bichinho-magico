@@ -82,7 +82,7 @@
 
   const state = {
     phase: "egg", stage: 0, species: null, name: "",
-    temp: 22, rubbing: false, idealMs: 0,
+    temp: 22, rubbing: false, idealMs: 0, eggCrack: 0,
     needs: { hunger: 80, thirst: 80, hygiene: 85, love: 75, energy: 90 },
     over: { hunger: 0, thirst: 0, hygiene: 0, love: 0 },
     mood: "neutral", moodLock: 0, sleeping: false,
@@ -254,7 +254,12 @@
   // ---------- Rendering ----------
   function renderActor() {
     if (state.phase === "egg" || state.phase === "hatching") {
-      el.actorImg.src = `${ART}egg.webp`;
+      const crack = state.eggCrack || 0;
+      el.actorImg.src = crack <= 0 ? `${ART}egg.webp`
+        : crack === 1 ? `${ART}egg_crack1.webp`
+        : crack === 2 ? `${ART}egg_crack2.webp`
+        : crack === 3 ? `${ART}egg_crack3.webp`
+        : `${ART}egg_broken.webp`;
       el.actorImg.style.scale = "1";
       return;
     }
@@ -321,10 +326,15 @@
     if (state.phase === "egg") {
       const t = state.temp;
       if (t > DEMO.idealMax + 4) return setGuide("Muito quente! Pare de esfregar ✋", null, null, true);
-      if (t >= DEMO.idealMin) return setGuide("Perfeito! Continue devagarinho 💛", "1");
+      if (t >= DEMO.idealMin) {
+        const pct = clamp(state.idealMs / (DEMO.hatchSeconds * 1000), 0, 1);
+        if (pct > 0.65) return setGuide("Está rachando! Continue com cuidado… 🥚", "1", null, true);
+        if (pct > 0.3) return setGuide("Algo se mexe lá dentro… ✨", "1");
+        return setGuide("Perfeito! Continue devagarinho 💛", "1");
+      }
       return setGuide("Esfregue o ovo com o dedo para aquecer! 👆", "1");
     }
-    if (state.phase !== "pet") return setGuide("Está nascendo! ✨");
+    if (state.phase === "hatching") return setGuide("O ovo está quebrando… surpresa! ✨");
     const p = state.name;
     if (state.busy) return;
     if (state.sleeping) {
@@ -421,30 +431,64 @@
   }
 
   // ---------- Game flow ----------
-  function hatch(species) {
+  function setEggCrack(level, withShake = true) {
+    if (state.eggCrack === level) return;
+    state.eggCrack = level;
+    renderActor();
+    if (withShake && level > 0) {
+      el.actor.classList.remove("crack-shake");
+      void el.actor.offsetWidth;
+      el.actor.classList.add("crack-shake");
+      burst(8 + level * 6, 0.45);
+    }
+  }
+
+  async function hatch(species) {
+    if (state.phase === "hatching") return;
     state.phase = "hatching";
+    state.rubbing = false;
     el.actor.classList.remove("rubbing");
     el.actor.classList.add("hatching");
+    el.app.dataset.phase = "hatching";
     updateGuide();
-    say("Crec… crec… ✨", 1400);
+
+    // Escolhe o bichinho em segredo — o jogador ainda não vê.
     species = species || pick(SPECIES.filter((s) => s.ready));
     preload(species);
-    setTimeout(() => {
-      flash();
-      burst(120);
-      Object.assign(state, { phase: "pet", stage: 1, species, name: pick(species.names), lastGrowth: performance.now() });
-      el.app.dataset.phase = "pet";
-      el.actor.classList.remove("hatching");
-      el.actorImg.style.filter = "";
-      renderActor(); renderHeader(); renderGrowth();
-      Object.values(buttons).forEach((b) => (b.disabled = false));
-      el.btn1Icon.textContent = "☀️";
-      el.btn1Text.textContent = "Acordar";
-      setMood("happy", 2000);
-      rain(["✨", "💖", "⭐"], 10);
-      say(`Oi! Eu sou ${state.name}! 💖`, 2600);
-      state.nextSkit = performance.now() + 3200;
-    }, 1150);
+
+    const steps = [
+      { crack: 1, say: "Crec…", ms: 900 },
+      { crack: 2, say: "Crec… crec…", ms: 1100 },
+      { crack: 3, say: "Está nascendo! ✨", ms: 1300 },
+      { crack: 4, say: "…", ms: 700 },
+    ];
+    for (const step of steps) {
+      setEggCrack(step.crack, true);
+      say(step.say, step.ms);
+      await wait(step.ms);
+    }
+
+    el.actor.classList.remove("hatching");
+    el.actor.classList.add("hatch-burst");
+    flash();
+    burst(140, 0.5);
+    await wait(500);
+
+    Object.assign(state, {
+      phase: "pet", stage: 1, species, name: pick(species.names),
+      lastGrowth: performance.now(), eggCrack: 0, pose: null,
+    });
+    el.app.dataset.phase = "pet";
+    el.actor.classList.remove("hatch-burst", "crack-shake");
+    el.actorImg.style.filter = "";
+    renderActor(); renderHeader(); renderGrowth();
+    Object.values(buttons).forEach((b) => (b.disabled = false));
+    el.btn1Icon.textContent = "☀️";
+    el.btn1Text.textContent = "Acordar";
+    setMood("happy", 2000);
+    rain(["✨", "💖", "⭐"], 10);
+    say(`Surpresa! Eu sou ${state.name}! 💖`, 2800);
+    state.nextSkit = performance.now() + 3200;
   }
 
   function grow() {
@@ -569,6 +613,11 @@
       const ideal = state.temp >= DEMO.idealMin && state.temp <= DEMO.idealMax;
       state.idealMs = ideal ? state.idealMs + dt * 1000 : Math.max(0, state.idealMs - dt * 600);
       if (state.rubbing && Math.random() < 0.3) burst(1);
+      // Rachaduras aparecem aos poucos enquanto mantém a temperatura ideal
+      const pct = state.idealMs / (DEMO.hatchSeconds * 1000);
+      if (pct >= 0.85) setEggCrack(2, state.eggCrack < 2);
+      else if (pct >= 0.4) setEggCrack(1, state.eggCrack < 1);
+      else if (pct < 0.2) setEggCrack(0, false);
       renderEgg();
       if (state.idealMs >= DEMO.hatchSeconds * 1000) hatch(state.forceSpecies);
     } else if (state.phase === "pet") {
@@ -677,6 +726,10 @@
   }
 
   resizeFx();
+  ["egg", "egg_crack1", "egg_crack2", "egg_crack3", "egg_broken"].forEach((n) => {
+    const i = new Image();
+    i.src = `${ART}${n}.webp`;
+  });
   renderActor();
   renderEgg();
   renderGrowth();
