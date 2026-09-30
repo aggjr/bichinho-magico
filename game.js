@@ -17,7 +17,7 @@
   // profile: multiplicadores de necessidade (1 = normal) e tempo base de crescimento por fase (ms).
   const SPECIES = [
     {
-      id: "unicorn", ready: true, name: "Unicórnio", he: "ela", names: ["Luna", "Estrela", "Brilho"],
+      id: "unicorn", ready: true, name: "Unicórnio", he: "ela", names: ["Luna"],
       food: "🍓", foodName: "morango", glow: "rgba(230,180,255,.6)",
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall"], skit: "wobble", adultSkit: "rear",
@@ -26,7 +26,7 @@
       profile: { hunger: 0.85, thirst: 0.9, hygiene: 0.7, love: 1.55, energy: 1.1, growthMs: 55_000 },
     },
     {
-      id: "dino", ready: true, name: "Dinossauro", he: "ele", names: ["Rex", "Tuti", "Dino"],
+      id: "dino", ready: true, name: "Dinossauro", he: "ele", names: ["Freely"],
       food: "🍉", foodName: "melancia", glow: "rgba(170,255,190,.55)",
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
@@ -35,7 +35,7 @@
       profile: { hunger: 1.45, thirst: 1.2, hygiene: 1.1, love: 0.95, energy: 1.0, growthMs: 38_000 },
     },
     {
-      id: "kitty", ready: true, name: "Gatinho", he: "ele", names: ["Laranjinha", "Miau", "Neko"],
+      id: "kitty", ready: true, name: "Gatinho", he: "ele", names: ["Flofy"],
       food: "🐟", foodName: "peixinho", glow: "rgba(255,190,120,.6)",
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "child" },
       poses: ["plead", "eat", "sleep", "fall", "bed"], skit: "bed",
