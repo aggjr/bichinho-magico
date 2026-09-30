@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff8fab" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Bichinho" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Bichinho Mágico" />
+  <title>Bichinho Mágico</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="device" id="app" data-period="day" data-phase="egg">
+    <div class="scene">
+      <div class="scene-bg" id="sceneBg"></div>
+      <div class="scene-tint"></div>
+      <div class="scene-stars"></div>
+      <canvas class="scene-fx" id="fx"></canvas>
+      <div class="scene-vignette"></div>
+    </div>
+
+    <header class="hud-top">
+      <div class="nameplate glass">
+        <div class="nameplate-avatar" id="avatar"></div>
+        <div class="nameplate-text">
+          <strong id="petName">Ovo Mágico</strong>
+          <span id="petStage">Esperando nascer</span>
+        </div>
+      </div>
+      <div class="clock glass" id="clock">
+        <span class="clock-icon" id="clockIcon">☀️</span>
+        <span class="clock-time" id="clockTime">--:--</span>
+      </div>
+    </header>
+
+    <section class="needs glass" id="needs" aria-label="Necessidades">
+      <div class="gauge" data-need="hunger" style="--c1:#ffb35c;--c2:#ff7a59"><svg viewBox="0 0 44 44"><circle class="track" r="19" cx="22" cy="22"/><circle class="val" r="19" cx="22" cy="22"/></svg><span>🍓</span><em>Fome</em></div>
+      <div class="gauge" data-need="thirst" style="--c1:#7fd8ff;--c2:#4a9dff"><svg viewBox="0 0 44 44"><circle class="track" r="19" cx="22" cy="22"/><circle class="val" r="19" cx="22" cy="22"/></svg><span>💧</span><em>Sede</em></div>
+      <div class="gauge" data-need="hygiene" style="--c1:#a6f0e0;--c2:#3fc7b0"><svg viewBox="0 0 44 44"><circle class="track" r="19" cx="22" cy="22"/><circle class="val" r="19" cx="22" cy="22"/></svg><span>🫧</span><em>Banho</em></div>
+      <div class="gauge" data-need="love" style="--c1:#ffa6d0;--c2:#ff5c9d"><svg viewBox="0 0 44 44"><circle class="track" r="19" cx="22" cy="22"/><circle class="val" r="19" cx="22" cy="22"/></svg><span>💗</span><em>Carinho</em></div>
+      <div class="gauge" data-need="energy" style="--c1:#c7b3ff;--c2:#8a6cff"><svg viewBox="0 0 44 44"><circle class="track" r="19" cx="22" cy="22"/><circle class="val" r="19" cx="22" cy="22"/></svg><span>🌙</span><em>Sono</em></div>
+    </section>
+
+    <section class="stage" id="stage">
+      <div class="bubble" id="bubble" hidden></div>
+      <div class="wish" id="wish" hidden><span id="wishIcon">🍓</span></div>
+      <div class="actor-shadow" id="actorShadow"></div>
+      <div class="actor" id="actor" data-mood="neutral">
+        <div class="actor-glow" id="actorGlow"></div>
+        <div class="actor-move" id="actorMove">
+          <img class="actor-img" id="actorImg" alt="" draggable="false" />
+        </div>
+        <div class="actor-fx" id="actorFx"></div>
+      </div>
+      <div class="rub-hand" id="rubHand" aria-hidden="true">👆</div>
+    </section>
+
+    <p class="guide" id="guide">Esfregue o ovo com o dedo para aquecer!</p>
+
+    <section class="thermo glass" id="thermo">
+      <div class="thermo-head">
+        <span>🌡️ Temperatura</span>
+        <b id="thermoLabel">Frio</b>
+      </div>
+      <div class="thermo-track">
+        <div class="thermo-ideal"><span>ideal</span></div>
+        <div class="thermo-fill" id="thermoFill"></div>
+        <div class="thermo-knob" id="thermoKnob"></div>
+      </div>
+      <div class="thermo-progress"><i id="hatchFill"></i></div>
+      <p class="thermo-hint" id="thermoHint">Esfregue o ovo (ou segure <kbd>1</kbd>) para aquecer</p>
+    </section>
+
+    <nav class="dock" id="dock">
+      <button class="btn" data-key="1" style="--b1:#ffcf6b;--b2:#ff8a3d"><span class="k">1</span><span class="i" id="btn1Icon">🔥</span><span class="t" id="btn1Text">Aquecer</span></button>
+      <button class="btn" data-key="2" style="--b1:#ffb07a;--b2:#ff6b6b" disabled><span class="k">2</span><span class="i">🍓</span><span class="t">Comer</span></button>
+      <button class="btn" data-key="3" style="--b1:#8fe0ff;--b2:#4a8dff" disabled><span class="k">3</span><span class="i">💧</span><span class="t">Beber</span></button>
+      <button class="btn" data-key="4" style="--b1:#9ff5e2;--b2:#2fbfa5" disabled><span class="k">4</span><span class="i">🛁</span><span class="t">Banho</span></button>
+      <button class="btn" data-key="5" style="--b1:#ffb3d9;--b2:#ff5c9d" disabled><span class="k">5</span><span class="i">🤗</span><span class="t">Carinho</span></button>
+      <button class="btn" data-key="6" style="--b1:#c9b8ff;--b2:#7b5cff" disabled><span class="k">6</span><span class="i">🌙</span><span class="t">Dormir</span></button>
+    </nav>
+
+    <footer class="growth">
+      <ol class="growth-steps" id="growthSteps">
+        <li data-i="0">🥚</li><li data-i="1">Bebê</li><li data-i="2">Criança</li><li data-i="3">Jovem</li><li data-i="4">Adulto</li>
+      </ol>
+      <div class="growth-bar"><i id="growthFill"></i></div>
+      <p class="meta">Demo · 1 dia ≈ 2 min · cresce a cada ~45 s · teste: <kbd>0</kbd> novo ovo <kbd>7</kbd> fome <kbd>8</kbd> trapalhada <kbd>9</kbd> crescer · <span id="appVersion">V0.1.9</span></p>
+    </footer>
+
+    <div class="flash" id="flash"></div>
+    <div class="projectiles" id="projectiles"></div>
+  </main>
+  <script src="game.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

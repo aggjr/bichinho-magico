@@ -1,0 +1,10 @@
+{
+  "name": "bichinho-magico",
+  "version": "0.1.9",
+  "private": true,
+  "description": "Esboço Tamagotchi — Bichinho Mágico",
+  "scripts": {
+    "bump": "node scripts/bump-app-version.js",
+    "start": "npx --yes serve -p 5173 ."
+  }
+}

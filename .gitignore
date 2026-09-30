@@ -1,0 +1,9 @@
+.cursor/
+assets/raw/
+shots/
+screenshots/
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+.env
