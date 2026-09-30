@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Últimos 10 PIXELs</title>
+  <style>
+    body { margin: 0; font-family: "Baloo 2", Nunito, system-ui, sans-serif; background: linear-gradient(160deg,#fff6fb,#e8f6ff 50%,#fff0e8); color: #2a1830; }
+    h1 { text-align: center; margin: 24px 12px 8px; font-size: clamp(1.6rem,4vw,2.2rem); }
+    p { text-align: center; margin: 0 12px 24px; opacity: .7; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 18px; padding: 12px 20px 40px; max-width: 1100px; margin: 0 auto; }
+    a { text-decoration: none; color: inherit; background: rgba(255,255,255,.75); border-radius: 22px; padding: 14px; text-align: center; box-shadow: 0 10px 28px rgba(40,10,60,.12); transition: transform .15s; }
+    a:hover { transform: translateY(-3px); }
+    img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+    strong { display: block; font-size: 1.15rem; margin-top: 6px; }
+    em { display: block; font-style: normal; font-size: .85rem; opacity: .65; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Últimos 10 PIXELs</h1>
+  <p>Do mais recente ao mais antigo · clique para abrir no jogo</p>
+  <div class="grid" id="g"></div>
+  <script>
+    const pets = [
+      { id: "lilica", name: "Lilica", kind: "Coelhinha", tip: "pula, cava e ama cenoura" },
+      { id: "lion", name: "Lali", kind: "Leãozinho", tip: "rosna · pouco carinho" },
+      { id: "elephant", name: "Eli", kind: "Elefantinha", tip: "pisoteia e treme o chão" },
+      { id: "tini", name: "Tini", kind: "Cachorrinha", tip: "tímida · se esconde" },
+      { id: "floide", name: "Floide", kind: "Gatinho", tip: "travesso · bolinha de lã" },
+      { id: "nini", name: "Nini", kind: "Borboletinha", tip: "bem ativa · voa rápido" },
+      { id: "butterfly", name: "Ciça", kind: "Borboletinha", tip: "calma · voa suave" },
+      { id: "bee", name: "Biz", kind: "Abelhinha", tip: "esperta · zumzum" },
+      { id: "axolotl", name: "Gotinha", kind: "Axolote", tip: "fofinha · nada" },
+      { id: "monkey", name: "Rabi", kind: "Macaquinho", tip: "balança na cauda · banana" },
+    ];
+    document.getElementById("g").innerHTML = pets.map((p) => `
+      <a href="index.html?species=${p.id}&stage=1&name=${encodeURIComponent(p.name)}" target="_blank" rel="noopener">
+        <img src="assets/pets/${p.id}_newborn.webp" alt="${p.name}" />
+        <strong>${p.name}</strong>
+        <em>${p.kind} · ${p.tip}</em>
+      </a>`).join("");
+  </script>
+</body>
+</html>

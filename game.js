@@ -91,6 +91,88 @@
       profile: { hunger: 1.1, thirst: 1.05, hygiene: 1.1, love: 1.2, energy: 0.95, growthMs: 74_000 },
     },
     {
+      id: "monkey", audience: "both", ready: true, name: "Macaquinho", he: "ele", names: ["Rabi"],
+      food: "🍌", foodName: "bananinha", glow: "rgba(255,180,100,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "swing", "mad", "sad", "scratch", "sleepy"],
+      skit: "swing", childSkit: "swing", adultSkit: "swing",
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.15, thirst: 1.05, hygiene: 1.1, love: 1.05, energy: 1.15, growthMs: 74_000 },
+    },
+    {
+      id: "axolotl", audience: "both", ready: true, name: "Axolote", he: "ela", names: ["Gotinha"],
+      food: "🦐", foodName: "camarãozinho", glow: "rgba(120,220,210,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "swim", "mad", "sad", "scratch", "sleepy"],
+      skit: "swim", childSkit: "swim", adultSkit: "swim",
+      focus: ["thirst", "love"],
+      profile: { hunger: 1.05, thirst: 1.2, hygiene: 0.9, love: 1.15, energy: 1.0, growthMs: 76_000 },
+    },
+    {
+      id: "bee", audience: "both", ready: true, name: "Abelhinha", he: "ela", names: ["Biz"],
+      food: "🍯", foodName: "melzinho", glow: "rgba(255,210,80,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"],
+      skit: "fly", childSkit: "fly", adultSkit: "fly",
+      focus: ["energy", "hunger"],
+      profile: { hunger: 1.1, thirst: 1.05, hygiene: 0.95, love: 1.0, energy: 1.25, growthMs: 70_000 },
+    },
+    {
+      id: "butterfly", audience: "girl", ready: true, name: "Borboletinha", he: "ela", names: ["Ciça"],
+      food: "🌸", foodName: "florzinha", glow: "rgba(255,160,160,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"],
+      skit: "fly", childSkit: "fly", adultSkit: "fly",
+      focus: ["love", "energy"],
+      profile: { hunger: 0.95, thirst: 1.0, hygiene: 0.85, love: 1.15, energy: 1.1, growthMs: 78_000 },
+    },
+    {
+      id: "nini", audience: "girl", ready: true, name: "Borboletinha", he: "ela", names: ["Nini"],
+      food: "🌺", foodName: "florzinha", glow: "rgba(255,180,100,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"],
+      skit: "zip", childSkit: "zip", adultSkit: "zip",
+      focus: ["energy", "love"],
+      profile: { hunger: 1.05, thirst: 1.0, hygiene: 0.9, love: 1.1, energy: 1.35, growthMs: 68_000 },
+    },
+    {
+      id: "floide", audience: "both", ready: true, name: "Gatinho", he: "ele", names: ["Floide"],
+      food: "🐟", foodName: "peixinho", glow: "rgba(255,200,150,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "yarn", "mad", "sad", "scratch", "sleepy"],
+      skit: "yarn", childSkit: "yarn", adultSkit: "yarn",
+      focus: ["love", "energy"],
+      profile: { hunger: 1.05, thirst: 0.95, hygiene: 1.05, love: 1.1, energy: 1.25, growthMs: 72_000 },
+    },
+    {
+      id: "tini", audience: "both", ready: true, name: "Cachorrinha", he: "ela", names: ["Tini"],
+      food: "🦴", foodName: "ossinho", glow: "rgba(255,210,140,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "hide", "mad", "sad", "scratch", "sleepy"],
+      skit: "hide", childSkit: "hide", adultSkit: "hide",
+      focus: ["love", "hygiene"],
+      profile: { hunger: 1.0, thirst: 1.0, hygiene: 1.05, love: 1.25, energy: 0.95, growthMs: 76_000 },
+    },
+    {
+      id: "elephant", audience: "both", ready: true, name: "Elefantinha", he: "ela", names: ["Eli"],
+      food: "🍉", foodName: "melancia", glow: "rgba(180,180,190,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "stomp", "mad", "sad", "scratch", "sleepy"],
+      skit: "stomp", childSkit: "stomp", adultSkit: "stomp",
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.25, thirst: 1.15, hygiene: 1.1, love: 1.05, energy: 1.1, growthMs: 82_000 },
+    },
+    {
+      id: "lion", audience: "boy", ready: true, name: "Leãozinho", he: "ele", names: ["Lali"],
+      food: "🥩", foodName: "carnezinha", glow: "rgba(255,160,80,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "roar", "mad", "sad", "scratch", "sleepy"],
+      skit: "roar", childSkit: "roar", adultSkit: "roar",
+      focus: ["hunger", "energy"],
+      // Pouco carinho: cansa rápido de colo e pede menos
+      profile: { hunger: 1.2, thirst: 1.05, hygiene: 1.0, love: 0.55, energy: 1.15, growthMs: 78_000 },
+    },
+    {
       id: "racer", audience: "boy", ready: true, name: "Carrinho", he: "ele", names: ["Turbo"],
       food: "🔧", foodName: "peçinhas", glow: "rgba(255,120,100,.65)",
       diet: "machine",
@@ -179,11 +261,13 @@
       },
     },
     {
-      id: "bunny", audience: "girl", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
-      food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
-      stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
-      focus: ["hunger", "love"],
-      profile: { hunger: 1.15, thirst: 1.0, hygiene: 0.8, love: 1.1, energy: 1.0, growthMs: 70_000 },
+      id: "lilica", audience: "girl", ready: true, name: "Coelhinha", he: "ela", names: ["Lilica"],
+      food: "🥕", foodName: "cenourinha", glow: "rgba(255,210,230,.6)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "hop", "dig", "mad", "sad", "scratch", "sleepy"],
+      skit: "hop", childSkit: "dig", adultSkit: "hop",
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.2, thirst: 1.0, hygiene: 1.15, love: 1.1, energy: 1.3, growthMs: 70_000 },
     },
     {
       id: "robot", audience: "boy", name: "Robôzinho", he: "ele", names: ["Bip", "Chip"],
@@ -423,7 +507,7 @@
   function hasPose(pose) {
     if (!state.species?.poses?.includes(pose)) return false;
     // Poses especiais de máquina / slime valem em qualquer fase
-    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce", "splash", "mad", "sad", "scratch", "sleepy"].includes(pose)) return true;
+    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce", "splash", "swing", "swim", "zip", "yarn", "hide", "stomp", "roar", "hop", "mad", "sad", "scratch", "sleepy"].includes(pose)) return true;
     return state.stage === 1;
   }
   function artKey(sp) {
@@ -909,6 +993,76 @@
         rain(["💧", "🌊", "✨"], 10);
         say("Água geladinha! Hihi", 1600);
         await wait(1400);
+      } else if (kind === "swing") {
+        state.pose = state.species.poses.includes("swing") ? "swing" : null;
+        renderActor();
+        say("Balancinho! 🍌", 1400);
+        await playMove("wobble", 700);
+        await playMove("rear", 1000);
+        rain(["🍌", "⭐", "✨"], 8);
+        say("Uhul na cauda!", 1600);
+        await wait(1400);
+      } else if (kind === "swim") {
+        state.pose = state.species.poses.includes("swim") ? "swim" : null;
+        renderActor();
+        say("Nadando… blub! 💧", 1500);
+        await playMove("wobble", 1300);
+        rain(["💧", "🫧", "✨"], 10);
+        say("Gotinha feliz!", 1600);
+        await wait(1400);
+      } else if (kind === "zip") {
+        state.pose = "fly"; renderActor();
+        say("Zuum zuum! 🦋", 1200);
+        await playMove("fly", 900);
+        await playMove("wobble", 600);
+        await playMove("fly", 900);
+        rain(["✨", "🌸", "💨"], 10);
+        say("Nini voa pra todo lado!", 1600);
+        await wait(1400);
+      } else if (kind === "yarn") {
+        state.pose = state.species.poses.includes("yarn") ? "yarn" : null;
+        renderActor();
+        say("Minha lã! 🧶", 1400);
+        await playMove("wobble", 1200);
+        rain(["🧶", "✨", "🐾"], 8);
+        say("Travessura!", 1600);
+        await wait(1400);
+      } else if (kind === "hide") {
+        state.pose = state.species.poses.includes("hide") ? "hide" : null;
+        renderActor();
+        say("…escondida… 🙈", 1500);
+        await playMove("wobble", 1400);
+        rain(["💗", "✨"], 5);
+        say("Só um pouquinho…", 1600);
+        await wait(1400);
+      } else if (kind === "stomp") {
+        state.pose = state.species.poses.includes("stomp") ? "stomp" : null;
+        renderActor();
+        say("PISOTEIO! 🐘", 1200);
+        await playMove("rear", 700);
+        playMove("splat", 500);
+        burst(40, 0.92);
+        rain(["💥", "🟤", "✨"], 10);
+        say("O mundo tremeu!", 1800);
+        await wait(1600);
+      } else if (kind === "roar") {
+        state.pose = state.species.poses.includes("roar") ? "roar" : null;
+        renderActor();
+        say("GRRRRAWR! 🦁", 1400);
+        await playMove("rear", 1200);
+        rain(["💢", "💨", "✨"], 8);
+        say("Não me faça carinho agora!", 1800);
+        await wait(1600);
+      } else if (kind === "hop") {
+        state.pose = state.species.poses.includes("hop") ? "hop" : null;
+        renderActor();
+        say("Pula pula! 🐇", 1200);
+        await playMove("rear", 700);
+        await playMove("wobble", 500);
+        await playMove("rear", 700);
+        rain(["🥕", "✨", "🌱"], 8);
+        say("Lilica não para!", 1600);
+        await wait(1400);
       } else if (kind === "rear") {
         say("Iiiirrí! 🌈", 1600);
         rain(["✨", "🌈", "⭐"], 8);
@@ -1078,7 +1232,8 @@
       playMove("wobble", 1400);
       say(pick(["Splash! 🫧", "Cosquinha! Hihi", "Cheirosinho!"]));
     } else if (kind === "pet") {
-      if (tooMuch("love", 94, "Ai, chega de apertar! 😤")) return;
+      const loveCap = state.species.id === "lion" ? 55 : 94;
+      if (tooMuch("love", loveCap, state.species.id === "lion" ? "Grr! Chega de carinho! 🦁" : "Ai, chega de apertar! 😤")) return;
       n.love = clamp(n.love + boost, 0, 100);
       relieve("love");
       rain(["💖", "💗", "💕", "🥰"], 7);
