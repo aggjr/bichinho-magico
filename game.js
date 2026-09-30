@@ -14,6 +14,7 @@
   const STAGE_SCALE = [1, 0.8, 0.87, 0.94, 1];
 
   // stages: arte base por fase. poses: arte especial (só existe na fase bebê por enquanto).
+  // profile: multiplicadores de necessidade (1 = normal) e tempo base de crescimento por fase (ms).
   const SPECIES = [
     {
       id: "unicorn", ready: true, name: "Unicórnio", he: "ela", names: ["Luna", "Estrela", "Brilho"],
@@ -21,6 +22,8 @@
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall"], skit: "wobble", adultSkit: "rear",
       sleepStages: ["child", "adult"],
+      trait: "precisa de muito carinho e magia",
+      profile: { hunger: 0.85, thirst: 0.9, hygiene: 0.7, love: 1.55, energy: 1.1, growthMs: 55_000 },
     },
     {
       id: "dino", ready: true, name: "Dinossauro", he: "ele", names: ["Rex", "Tuti", "Dino"],
@@ -28,6 +31,8 @@
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
       sleepStages: ["child", "adult"],
+      trait: "come bastante e cresce depressa",
+      profile: { hunger: 1.45, thirst: 1.2, hygiene: 1.1, love: 0.95, energy: 1.0, growthMs: 38_000 },
     },
     {
       id: "kitty", ready: true, name: "Gatinho", he: "ele", names: ["Laranjinha", "Miau", "Neko"],
@@ -35,6 +40,8 @@
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "child" },
       poses: ["plead", "eat", "sleep", "fall", "bed"], skit: "bed",
       sleepStages: ["child"],
+      trait: "quer colo o tempo todo e dorme fácil",
+      profile: { hunger: 0.95, thirst: 0.85, hygiene: 0.8, love: 1.6, energy: 1.35, growthMs: 48_000 },
     },
     {
       id: "duck", ready: true, name: "Patinho", he: "ele", names: ["Tobi"],
@@ -42,6 +49,8 @@
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
       sleepStages: ["child", "adult"],
+      trait: "bebe muita água e ama banho",
+      profile: { hunger: 1.05, thirst: 1.5, hygiene: 1.35, love: 1.05, energy: 0.95, growthMs: 42_000 },
     },
     {
       id: "pig", ready: true, name: "Porquinho", he: "ele", names: ["Pigma"],
@@ -49,15 +58,61 @@
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "mud"], skit: "mud",
       sleepStages: ["child", "adult"],
+      trait: "come bem e se suja rapidinho",
+      profile: { hunger: 1.4, thirst: 1.05, hygiene: 1.8, love: 1.1, energy: 0.9, growthMs: 44_000 },
     },
-    { id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"], food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [] },
-    { id: "robot", name: "Robôzinho", he: "ele", names: ["Bip", "Chip"], food: "🔋", foodName: "bateria", glow: "rgba(120,240,255,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [] },
-    { id: "hamster", name: "Hamster", he: "ele", names: ["Bolinha", "Paçoca"], food: "🌻", foodName: "semente", glow: "rgba(255,210,140,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [] },
-    { id: "panda", name: "Panda", he: "ele", names: ["Mochi", "Bambu"], food: "🎋", foodName: "bambu", glow: "rgba(255,255,255,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [] },
-    { id: "puppy", name: "Cachorrinho", he: "ele", names: ["Mel", "Toby"], food: "🦴", foodName: "ossinho", glow: "rgba(255,210,150,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [] },
-    { id: "dragon", name: "Dragãozinho", he: "ele", names: ["Faísca", "Draco"], food: "🌶️", foodName: "pimentinha", glow: "rgba(255,150,120,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [] },
-    { id: "fox", name: "Raposinha", he: "ela", names: ["Canela", "Floco"], food: "🫐", foodName: "frutinha", glow: "rgba(255,170,90,.6)", stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [] },
+    {
+      id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
+      food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
+      trait: "sempre com fominha de cenoura",
+      profile: { hunger: 1.35, thirst: 1.0, hygiene: 0.75, love: 1.25, energy: 1.0, growthMs: 40_000 },
+    },
+    {
+      id: "robot", name: "Robôzinho", he: "ele", names: ["Bip", "Chip"],
+      food: "🔋", foodName: "bateria", glow: "rgba(120,240,255,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
+      trait: "gasta bateria rápido e quase não se suja",
+      profile: { hunger: 1.5, thirst: 0.4, hygiene: 0.35, love: 0.9, energy: 1.4, growthMs: 50_000 },
+    },
+    {
+      id: "hamster", name: "Hamster", he: "ele", names: ["Bolinha", "Paçoca"],
+      food: "🌻", foodName: "semente", glow: "rgba(255,210,140,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
+      trait: "come sem parar e cresce depressa",
+      profile: { hunger: 1.55, thirst: 1.1, hygiene: 1.0, love: 1.15, energy: 1.2, growthMs: 35_000 },
+    },
+    {
+      id: "panda", name: "Panda", he: "ele", names: ["Mochi", "Bambu"],
+      food: "🎋", foodName: "bambu", glow: "rgba(255,255,255,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
+      trait: "come bambu sem parar e cresce devagar",
+      profile: { hunger: 1.5, thirst: 1.0, hygiene: 0.85, love: 1.0, energy: 1.25, growthMs: 60_000 },
+    },
+    {
+      id: "puppy", name: "Cachorrinho", he: "ele", names: ["Mel", "Toby"],
+      food: "🦴", foodName: "ossinho", glow: "rgba(255,210,150,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
+      trait: "precisa de muito carinho e brinca sem parar",
+      profile: { hunger: 1.2, thirst: 1.15, hygiene: 1.2, love: 1.7, energy: 1.3, growthMs: 40_000 },
+    },
+    {
+      id: "dragon", name: "Dragãozinho", he: "ele", names: ["Faísca", "Draco"],
+      food: "🌶️", foodName: "pimentinha", glow: "rgba(255,150,120,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
+      trait: "come MUITO e tem sede de fogo",
+      profile: { hunger: 1.85, thirst: 1.55, hygiene: 1.0, love: 1.0, energy: 1.15, growthMs: 58_000 },
+    },
+    {
+      id: "fox", name: "Raposinha", he: "ela", names: ["Canela", "Floco"],
+      food: "🫐", foodName: "frutinha", glow: "rgba(255,170,90,.6)",
+      stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
+      trait: "esperta, ativa e um pouco independente",
+      profile: { hunger: 1.1, thirst: 1.05, hygiene: 0.9, love: 0.85, energy: 1.4, growthMs: 46_000 },
+    },
   ];
+
+  const BASE_RATES = { hunger: 0.42, thirst: 0.46, hygiene: 0.2, love: 0.34, energy: 0.26 };
 
   const NEEDS = {
     hunger: { key: "2", icon: "🍓", text: (p) => `${p} está com fome! Aperte 🍓 Comer` },
@@ -87,6 +142,7 @@
     over: { hunger: 0, thirst: 0, hygiene: 0, love: 0 },
     mood: "neutral", moodLock: 0, sleeping: false,
     pose: null, busy: false, nextSkit: Infinity,
+    growthIntervalMs: DEMO.growthIntervalMs, lackMs: 0,
     dayStart: performance.now(), lastGrowth: performance.now(), last: performance.now(),
     fxTimer: 0, preview: null,
   };
@@ -341,11 +397,26 @@
       const day = el.app.dataset.period === "day";
       return setGuide(day && state.needs.energy > 90 ? `${p} já descansou! Aperte ☀️ Acordar` : `Shhh… ${p} está dormindo 💤`, day && state.needs.energy > 90 ? "1" : null);
     }
-    if (state.mood === "mad") return setGuide(`${p} ficou bravinho… Dá um tempinho! ✋`, null, "😤", true);
+    if (state.mood === "mad") return setGuide(`${p} está nervoso! Cuida dele agora! 💢`, null, "😤", true);
+    if (state.mood === "sad") {
+      const n = state.needs;
+      const worst = ["hunger", "thirst", "hygiene", "love", "energy"].sort((a, b) => n[a] - n[b])[0];
+      const need = NEEDS[worst];
+      const icon = worst === "hunger" ? state.species.food : need.icon;
+      return setGuide(`${p} está triste… ${worst === "hunger" ? `Quer ${state.species.foodName}!` : need.text(p)}`, need.key, icon, true);
+    }
 
     const n = state.needs;
     const night = el.app.dataset.period === "night";
-    const limits = { hunger: 45, thirst: 45, hygiene: 35, love: 45, energy: night ? 60 : 25 };
+    // Limiares um pouco mais baixos no traço forte do animal
+    const pr = state.species.profile || {};
+    const limits = {
+      hunger: pr.hunger > 1.3 ? 50 : 42,
+      thirst: pr.thirst > 1.3 ? 50 : 42,
+      hygiene: pr.hygiene > 1.3 ? 42 : 32,
+      love: pr.love > 1.3 ? 50 : 42,
+      energy: night ? 60 : (pr.energy > 1.2 ? 32 : 24),
+    };
     let worst = null;
     for (const k of Object.keys(limits)) {
       if (n[k] < limits[k] && (!worst || n[k] - limits[k] < n[worst] - limits[worst])) worst = k;
@@ -357,7 +428,7 @@
       return setGuide(text, need.key, icon, n[worst] < 25);
     }
     if (night) return setGuide(`Está de noite… hora de nanar? 🌙`, "6", "🌙");
-    setGuide(`${p} está feliz! Faça carinho passando o dedo 💕`);
+    setGuide(`${p} está feliz! (${state.species.trait}) 💕`);
   }
 
   // ---------- Clumsy baby skits ----------
@@ -476,7 +547,8 @@
 
     Object.assign(state, {
       phase: "pet", stage: 1, species, name: pick(species.names),
-      lastGrowth: performance.now(), eggCrack: 0, pose: null,
+      lastGrowth: performance.now(), eggCrack: 0, pose: null, lackMs: 0,
+      growthIntervalMs: Math.round((species.profile?.growthMs || DEMO.growthIntervalMs) * (0.88 + Math.random() * 0.24)),
     });
     el.app.dataset.phase = "pet";
     el.actor.classList.remove("hatch-burst", "crack-shake");
@@ -488,6 +560,7 @@
     setMood("happy", 2000);
     rain(["✨", "💖", "⭐"], 10);
     say(`Surpresa! Eu sou ${state.name}! 💖`, 2800);
+    setTimeout(() => say(`${state.species.trait[0].toUpperCase()}${state.species.trait.slice(1)}.`, 3200), 2900);
     state.nextSkit = performance.now() + 3200;
   }
 
@@ -504,7 +577,19 @@
     state.nextSkit = performance.now() + 5000;
   }
 
-  const needMult = () => 0.7 + state.stage * 0.35;
+  const stageNeedMult = () => 0.75 + state.stage * 0.3;
+
+  function decayRates() {
+    const stage = stageNeedMult();
+    const pr = state.species?.profile || {};
+    return {
+      hunger: BASE_RATES.hunger * stage * (pr.hunger || 1),
+      thirst: BASE_RATES.thirst * stage * (pr.thirst || 1),
+      hygiene: BASE_RATES.hygiene * stage * (pr.hygiene || 1),
+      love: BASE_RATES.love * stage * (pr.love || 1),
+      energy: state.sleeping ? -5 : BASE_RATES.energy * stage * (pr.energy || 1),
+    };
+  }
 
   async function care(kind) {
     if (state.phase !== "pet") return;
@@ -576,6 +661,7 @@
       say("Bom dia!! ☀️", 2000);
     }
     setMood("happy", 1600);
+    state.lackMs = Math.max(0, state.lackMs - 4000);
     renderActor();
     renderNeeds();
   }
@@ -585,7 +671,16 @@
     if (state.sleeping) return setMood("sleep");
     const n = state.needs;
     if (Object.values(state.over).some((v) => v > 2)) return setMood("mad");
-    if (n.hunger < 20 || n.thirst < 20 || n.love < 18 || n.energy < 15) return setMood("sad");
+
+    const lows = ["hunger", "thirst", "hygiene", "love", "energy"].filter((k) => n[k] < 35);
+    const crits = ["hunger", "thirst", "hygiene", "love", "energy"].filter((k) => n[k] < 18);
+
+    if (crits.length >= 1 || lows.length >= 2 || state.lackMs > 12_000) {
+      return setMood("mad"); // nervoso
+    }
+    if (lows.length >= 1 || n.hunger < 28 || n.thirst < 28 || n.love < 25 || n.energy < 22 || n.hygiene < 22) {
+      return setMood("sad");
+    }
     if (n.hunger > 60 && n.thirst > 60 && n.love > 55 && n.hygiene > 50) return setMood("happy");
     setMood("neutral");
   }
@@ -622,13 +717,22 @@
       if (state.idealMs >= DEMO.hatchSeconds * 1000) hatch(state.forceSpecies);
     } else if (state.phase === "pet") {
       if (!state.preview) {
-        const m = needMult();
-        const rates = { hunger: 0.45 * m, thirst: 0.5 * m, hygiene: 0.22 * m, love: 0.36 * m, energy: state.sleeping ? -5 : 0.28 * m };
+        const rates = decayRates();
         for (const [k, r] of Object.entries(rates)) state.needs[k] = clamp(state.needs[k] - r * dt, 0, 100);
         for (const k of Object.keys(state.over)) state.over[k] = Math.max(0, state.over[k] - 0.15 * dt);
+
+        const lacking = Object.values(state.needs).some((v) => v < 35);
+        state.lackMs = lacking ? state.lackMs + dt * 1000 : Math.max(0, state.lackMs - dt * 2000);
+
         if (state.stage < 4) {
-          const frac = (now - state.lastGrowth) / DEMO.growthIntervalMs;
-          if (frac >= 1) { state.lastGrowth = now; grow(); } else renderGrowth(frac);
+          const frac = (now - state.lastGrowth) / state.growthIntervalMs;
+          if (frac >= 1) {
+            state.lastGrowth = now;
+            // Cada fase seguinte usa o perfil do animal ± um pouquinho de aleatório
+            const base = state.species.profile?.growthMs || DEMO.growthIntervalMs;
+            state.growthIntervalMs = Math.round(base * (0.9 + Math.random() * 0.2));
+            grow();
+          } else renderGrowth(frac);
         }
         if (now > state.nextSkit) {
           const s = skitForStage();
@@ -642,8 +746,16 @@
       state.fxTimer -= dt;
       if (state.fxTimer <= 0) {
         state.fxTimer = 0.9;
-        if (state.mood === "sad") { fx("tear", "💧", { x: 40, y: 45, dx: -10 }); fx("tear", "💧", { x: 58, y: 45, dx: 10 }); if (Math.random() < 0.12) say(pick(["Buááá…", "Tô com fominha…", "Me dá colo?", "Tô com sede…"]), 1800); }
-        if (state.mood === "mad") { fx("float", "💨", { x: 30, y: 40, dx: -40 }); fx("float", "💢", { x: 65, y: 35, dx: 20 }); }
+        if (state.mood === "sad") {
+          fx("tear", "💧", { x: 40, y: 45, dx: -10 });
+          fx("tear", "💧", { x: 58, y: 45, dx: 10 });
+          if (Math.random() < 0.14) say(pick(["Buááá…", "Estou triste…", "Me ajuda?", "Preciso de você…"]), 1800);
+        }
+        if (state.mood === "mad") {
+          fx("float", "💨", { x: 30, y: 40, dx: -40 });
+          fx("float", "💢", { x: 65, y: 35, dx: 20 });
+          if (Math.random() < 0.12) say(pick(["Humpf!", "Estou nervoso!", "Não aguento mais!", "Cuida de mim! 💢"]), 1800);
+        }
         if (state.mood === "sleep") fx("zzz", "Z", { x: 58, y: 45, font: `${1.4 + Math.random()}rem` });
       }
     }
@@ -713,6 +825,8 @@
     }
     Object.assign(state, { phase: "pet", species: sp || SPECIES[0], stage: clamp(Number(q.get("stage")) || 1, 1, 4) });
     state.name = q.get("name") || state.species.names[0];
+    state.growthIntervalMs = state.species.profile?.growthMs || DEMO.growthIntervalMs;
+    state.lackMs = 0;
     el.app.dataset.phase = "pet";
     Object.values(buttons).forEach((b) => (b.disabled = false));
     el.btn1Icon.textContent = "☀️";
