@@ -1,15 +1,15 @@
-{
+﻿{
   "title": "Publicar 10 PIXELs novos",
-  "percent": 85,
-  "step": 4,
+  "percent": 100,
+  "step": 5,
   "steps": 5,
-  "action": "commit + push para o GitHub Pages",
-  "updatedAt": "2026-09-30T23:45:00-03:00",
+  "action": "Pronto — galeria aberta no Chrome",
+  "updatedAt": "2026-09-30T20:46:13.8019027-03:00",
   "checklist": [
     { "done": true, "text": "Arte gerada (Rabi→Lilica)" },
     { "done": true, "text": "Chroma-key → webp (121/121)" },
     { "done": true, "text": "SPECIES + skits no game.js" },
-    { "done": false, "text": "Commit + push" },
-    { "done": false, "text": "Abrir galeria no Chrome" }
+    { "done": true, "text": "Commit + push" },
+    { "done": true, "text": "Abrir galeria no Chrome" }
   ]
 }
