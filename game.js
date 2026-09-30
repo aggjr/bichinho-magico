@@ -1265,7 +1265,16 @@
   function applyPreview() {
     const q = new URLSearchParams(location.search);
     const sp = SPECIES.find((s) => s.id === q.get("species"));
-    if (q.get("hatch") != null) { state.forceSpecies = sp; return; }
+    if (q.get("hatch") != null) {
+      state.forceSpecies = sp || null;
+      // Demo: nasce na hora o pixel pedido (sem esfregar o ovo)
+      if (sp) {
+        setTimeout(() => {
+          if (state.phase === "egg") hatch(sp);
+        }, 400);
+      }
+      return;
+    }
     if (!q.size) return;
     state.preview = { period: q.get("period") || "day" };
     if (q.get("egg") != null) {
