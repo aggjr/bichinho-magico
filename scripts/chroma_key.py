@@ -24,6 +24,13 @@ def key(src: str, dst: str, max_size: int = 768) -> None:
     img = Image.open(src).convert("RGB")
     a = np.asarray(img).astype(np.float32) / 255.0
     bg = sample_bg(a)
+    # Magenta/pink chroma → convert to green so green-skinned pets (slime) can key safely
+    if float(bg[0]) > 0.55 and float(bg[2]) > 0.55 and float(bg[1]) < 0.45:
+        r0, g0, b0 = a[..., 0], a[..., 1], a[..., 2]
+        mag = (r0 > 0.55) & (b0 > 0.55) & (g0 < np.maximum(r0, b0) * 0.75)
+        a = a.copy()
+        a[mag] = (0.0, 1.0, 0.0)
+        bg = sample_bg(a)
     r, g, b = a[..., 0], a[..., 1], a[..., 2]
 
     dist = np.sqrt(((a - bg) ** 2).sum(axis=-1))

@@ -91,6 +91,74 @@
       profile: { hunger: 1.15, thirst: 1.2, hygiene: 0.85, love: 0.95, energy: 1.15, growthMs: 82_000 },
     },
     {
+      id: "rocket", ready: true, name: "Foguete", he: "ele", names: ["Foguinho"],
+      food: "🔧", foodName: "peçinhas", glow: "rgba(255,140,100,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "launch"], skit: "launch", childSkit: "launch", adultSkit: "launch",
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.15, thirst: 1.2, hygiene: 0.9, love: 1.0, energy: 1.2, growthMs: 80_000 },
+    },
+    {
+      id: "heli", ready: true, name: "Helicóptero", he: "ele", names: ["Hélio"],
+      food: "🔩", foodName: "parafusos", glow: "rgba(100,180,255,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "hover"], skit: "hover", childSkit: "hover", adultSkit: "hover",
+      focus: ["thirst", "energy"],
+      profile: { hunger: 1.1, thirst: 1.2, hygiene: 1.0, love: 1.0, energy: 1.15, growthMs: 78_000 },
+    },
+    {
+      id: "train", ready: true, name: "Trem", he: "ele", names: ["Chuflinho"],
+      food: "🔧", foodName: "peçinhas", glow: "rgba(255,100,100,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "chug"], skit: "chug", childSkit: "chug", adultSkit: "chug",
+      focus: ["hunger", "thirst"],
+      profile: { hunger: 1.2, thirst: 1.15, hygiene: 1.05, love: 0.95, energy: 1.1, growthMs: 82_000 },
+    },
+    {
+      id: "tractor", ready: true, name: "Trator", he: "ele", names: ["Toto"],
+      food: "🔩", foodName: "parafusos", glow: "rgba(255,180,80,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "plough"], skit: "plough", childSkit: "plough", adultSkit: "plough",
+      focus: ["hygiene", "hunger"],
+      profile: { hunger: 1.15, thirst: 1.15, hygiene: 1.25, love: 1.0, energy: 1.05, growthMs: 80_000 },
+    },
+    {
+      id: "boat", ready: true, name: "Barco", he: "ele", names: ["Marinho"],
+      food: "🔧", foodName: "peçinhas", glow: "rgba(80,200,200,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "sail"], skit: "sail", childSkit: "sail", adultSkit: "sail",
+      focus: ["thirst", "hygiene"],
+      profile: { hunger: 1.05, thirst: 1.2, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
+    },
+    {
+      id: "plane", ready: true, name: "Avião", he: "ele", names: ["Asinha"],
+      food: "🔩", foodName: "parafusos", glow: "rgba(120,190,255,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "loop"], skit: "loop", childSkit: "loop", adultSkit: "loop",
+      focus: ["energy", "hunger"],
+      profile: { hunger: 1.1, thirst: 1.15, hygiene: 0.95, love: 1.0, energy: 1.2, growthMs: 78_000 },
+    },
+    {
+      id: "slime", ready: true, name: "Slime", he: "ele", names: ["Goo"],
+      food: "🍮", foodName: "geleinha", glow: "rgba(120,200,255,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "bounce"], skit: "bounce", childSkit: "bounce", adultSkit: "bounce",
+      focus: ["hunger", "love"],
+      profile: { hunger: 1.2, thirst: 1.1, hygiene: 0.7, love: 1.15, energy: 1.05, growthMs: 74_000 },
+      variants: {
+        blue: { he: "ele", names: ["Azulito", "Goo"], glow: "rgba(100,180,255,.65)" },
+        green: { he: "ele", names: ["Verde", "Blob"], glow: "rgba(90,210,120,.65)" },
+        pink: { he: "ela", names: ["Rosa", "Melly"], glow: "rgba(255,150,200,.65)" },
+        lilac: { he: "ela", names: ["Lila", "Puff"], glow: "rgba(200,160,255,.65)" },
+      },
+    },
+    {
       id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
       food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
@@ -210,6 +278,7 @@
     boosts: { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 },
     strongTraits: [],
     hatchBag: [],
+    variant: null,
     dayStart: performance.now(), lastGrowth: performance.now(), last: performance.now(),
     fxTimer: 0, preview: null,
   };
@@ -307,17 +376,22 @@
   // ---------- Art selection ----------
   function hasPose(pose) {
     if (!state.species?.poses?.includes(pose)) return false;
-    // Poses especiais de máquina (turbo / forma carro) valem em qualquer fase
-    if (pose === "car" || pose === "turbo") return true;
+    // Poses especiais de máquina / slime valem em qualquer fase
+    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce"].includes(pose)) return true;
     return state.stage === 1;
   }
+  function artKey(sp) {
+    if (sp?.variants && state.variant) return `${sp.id}_${state.variant}`;
+    return sp.id;
+  }
   function baseArt(sp, stage) {
-    return `${ART}${sp.id}_${sp.stages[stage]}.webp`;
+    return `${ART}${artKey(sp)}_${sp.stages[stage]}.webp`;
   }
   function sleepArt(sp, stage) {
     const key = sp.stages[stage];
-    if ((sp.sleepStages || []).includes(key)) return `${ART}${sp.id}_${key}_sleep.webp`;
-    if (sp.poses.includes("sleep")) return `${ART}${sp.id}_sleep.webp`;
+    const ak = artKey(sp);
+    if ((sp.sleepStages || []).includes(key)) return `${ART}${ak}_${key}_sleep.webp`;
+    if (sp.poses.includes("sleep")) return `${ART}${ak}_sleep.webp`;
     return null;
   }
   function wantsSomething() {
@@ -326,19 +400,42 @@
   }
   function currentArt() {
     const sp = state.species;
+    const ak = artKey(sp);
     if (state.sleeping) {
       const s = sleepArt(sp, state.stage);
       if (s) return s;
     }
-    if (state.pose && hasPose(state.pose)) return `${ART}${sp.id}_${state.pose}.webp`;
-    if (!state.busy && state.mood !== "mad" && wantsSomething() && hasPose("plead")) return `${ART}${sp.id}_plead.webp`;
+    if (state.pose && hasPose(state.pose)) return `${ART}${ak}_${state.pose}.webp`;
+    if (!state.busy && state.mood !== "mad" && wantsSomething() && hasPose("plead")) return `${ART}${ak}_plead.webp`;
     return baseArt(sp, state.stage);
   }
   function preload(sp) {
-    const list = [1, 2, 3, 4].map((s) => baseArt(sp, s))
-      .concat(sp.poses.map((p) => `${ART}${sp.id}_${p}.webp`))
-      .concat((sp.sleepStages || []).map((k) => `${ART}${sp.id}_${k}_sleep.webp`));
-    list.forEach((src) => { const i = new Image(); i.src = src; });
+    const variants = sp.variants ? Object.keys(sp.variants) : [null];
+    variants.forEach((v) => {
+      const prev = state.variant;
+      if (v) state.variant = v;
+      const ak = artKey(sp);
+      const list = [1, 2, 3, 4].map((s) => baseArt(sp, s))
+        .concat(sp.poses.map((p) => `${ART}${ak}_${p}.webp`))
+        .concat((sp.sleepStages || []).map((k) => `${ART}${ak}_${k}_sleep.webp`));
+      list.forEach((src) => { const i = new Image(); i.src = src; });
+      state.variant = prev;
+    });
+  }
+
+  function pickVariant(sp) {
+    if (!sp?.variants) return null;
+    const q = new URLSearchParams(location.search);
+    const forced = q.get("color") || q.get("variant");
+    if (forced && sp.variants[forced]) return forced;
+    return pick(Object.keys(sp.variants));
+  }
+  function applyVariant(sp, variant) {
+    state.variant = variant;
+    if (!variant || !sp?.variants?.[variant]) return;
+    const v = sp.variants[variant];
+    sp.he = v.he || sp.he;
+    if (v.glow) sp.glow = v.glow;
   }
 
   // ---------- Particles ----------
@@ -672,6 +769,63 @@
         rain(["⚡", "🤖"], 5);
         say("E de volta a robô! 🤖", 1600);
         await wait(1400);
+      } else if (kind === "launch") {
+        state.pose = state.species.poses.includes("launch") ? "launch" : null;
+        renderActor();
+        say(state.stage === 1 ? "3… 2… 1…? 🍼" : "3… 2… 1… DECOLAR! 🚀", 1600);
+        await playMove("rear", 1400);
+        rain(["🚀", "⭐", "💨"], 10);
+        say("Quase fui pra lua!", 1800);
+        await wait(1600);
+      } else if (kind === "hover") {
+        state.pose = state.species.poses.includes("hover") ? "hover" : null;
+        renderActor();
+        say("Trrr trrr! 🚁", 1400);
+        await playMove("wobble", 1200);
+        rain(["💨", "✨"], 8);
+        say("Olha eu no ar!", 1600);
+        await wait(1400);
+      } else if (kind === "chug") {
+        state.pose = state.species.poses.includes("chug") ? "chug" : null;
+        renderActor();
+        say("Chuf chuf chuf! 🚂", 1500);
+        await playMove("wobble", 1400);
+        rain(["💨", "⭐"], 8);
+        say("Expresso mágico!", 1600);
+        await wait(1400);
+      } else if (kind === "plough") {
+        state.pose = state.species.poses.includes("plough") ? "plough" : null;
+        renderActor();
+        say("Vrum vrum na fazenda! 🚜", 1500);
+        await playMove("wobble", 1300);
+        rain(["🌾", "🟤", "✨"], 8);
+        say("Terra prontinha!", 1600);
+        await wait(1400);
+      } else if (kind === "sail") {
+        state.pose = state.species.poses.includes("sail") ? "sail" : null;
+        renderActor();
+        say("Vento na vela! ⛵", 1500);
+        await playMove("wobble", 1300);
+        rain(["🌊", "💨", "✨"], 8);
+        say("Iupi, navegando!", 1600);
+        await wait(1400);
+      } else if (kind === "loop") {
+        state.pose = state.species.poses.includes("loop") ? "loop" : null;
+        renderActor();
+        say("Looping! ✈️", 1400);
+        await playMove("rear", 1400);
+        rain(["☁️", "⭐", "💨"], 10);
+        say("Uhuuuul!", 1600);
+        await wait(1400);
+      } else if (kind === "bounce") {
+        state.pose = state.species.poses.includes("bounce") ? "bounce" : null;
+        renderActor();
+        say("Ploing ploing! 🍮", 1400);
+        await playMove("wobble", 700);
+        await playMove("rear", 900);
+        rain(["✨", "💜", "💚", "💙"], 10);
+        say("Sou todinho gelinho!", 1600);
+        await wait(1400);
       } else if (kind === "rear") {
         say("Iiiirrí! 🌈", 1600);
         rain(["✨", "🌈", "⭐"], 8);
@@ -719,6 +873,7 @@
 
     // Escolhe o bichinho em segredo — o jogador ainda não vê.
     species = species || pickHatchSpecies();
+    applyVariant(species, pickVariant(species));
     preload(species);
     const rolled = rollStrongTraits(species);
 
@@ -741,7 +896,7 @@
     await wait(500);
 
     Object.assign(state, {
-      phase: "pet", stage: 1, species, name: pick(species.names),
+      phase: "pet", stage: 1, species, name: pick((state.variant && species.variants?.[state.variant]?.names) || species.names),
       lastGrowth: performance.now(), eggCrack: 0, pose: null, lackMs: 0,
       boosts: rolled.boosts,
       strongTraits: rolled.strongTraits,
@@ -1029,7 +1184,8 @@
       return;
     }
     Object.assign(state, { phase: "pet", species: sp || SPECIES[0], stage: clamp(Number(q.get("stage")) || 1, 1, 4) });
-    state.name = q.get("name") || state.species.names[0];
+    applyVariant(state.species, pickVariant(state.species));
+    state.name = q.get("name") || pick((state.variant && state.species.variants?.[state.variant]?.names) || state.species.names);
     const rolled = rollStrongTraits(state.species);
     if (q.get("trait")) {
       const keys = q.get("trait").split(",").filter((k) => TRAIT_LINES[k] || TRAIT_LINES_MACHINE[k]);
