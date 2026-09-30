@@ -264,6 +264,25 @@ body.touch .btn .k { display: none; }
 .nameplate-text strong { font-family: var(--display); font-size: 1.35rem; font-weight: 800; color: #fff; text-shadow: 0 2px 8px rgba(80, 20, 90, 0.45); }
 .nameplate-text span { font-size: 0.78rem; font-weight: 800; color: rgba(255, 255, 255, 0.92); text-shadow: 0 1px 4px rgba(80, 20, 90, 0.4); }
 
+.trait-banner {
+  align-self: center;
+  max-width: 96%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(0.82rem, 2vh, 1.05rem);
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(255, 140, 180, 0.92), rgba(160, 120, 255, 0.88));
+  box-shadow: 0 6px 18px rgba(80, 20, 90, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  text-shadow: 0 1px 3px rgba(60, 20, 80, 0.35);
+  line-height: 1.25;
+}
+.trait-banner[hidden] { display: none; }
+.device[data-phase="egg"] .trait-banner,
+.device[data-phase="hatching"] .trait-banner { display: none; }
+
 .clock {
   display: flex;
   align-items: center;

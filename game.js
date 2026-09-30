@@ -13,8 +13,8 @@
   const STAGE_LABELS = ["Ovo", "Bebê", "Criança", "Jovem", "Adulto"];
   const STAGE_SCALE = [1, 0.8, 0.87, 0.94, 1];
 
-  // stages: arte base por fase. poses: arte especial (só existe na fase bebê por enquanto).
-  // profile: multiplicadores de necessidade (1 = normal) e tempo base de crescimento por fase (ms).
+  // focus: necessidades candidatas a serem dobradas (1 ou 2 sorteadas ao nascer)
+  // growthMs: tempo base por fase (já mais lento para a criança aproveitar)
   const SPECIES = [
     {
       id: "unicorn", ready: true, name: "Unicórnio", he: "ela", names: ["Luna"],
@@ -22,8 +22,8 @@
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall"], skit: "wobble", adultSkit: "rear",
       sleepStages: ["child", "adult"],
-      trait: "precisa de muito carinho e magia",
-      profile: { hunger: 0.85, thirst: 0.9, hygiene: 0.7, love: 1.55, energy: 1.1, growthMs: 55_000 },
+      focus: ["love", "energy"],
+      profile: { hunger: 0.9, thirst: 0.9, hygiene: 0.75, love: 1.2, energy: 1.05, growthMs: 80_000 },
     },
     {
       id: "dino", ready: true, name: "Dinossauro", he: "ele", names: ["Freely"],
@@ -31,8 +31,8 @@
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
       sleepStages: ["child", "adult"],
-      trait: "come bastante e cresce depressa",
-      profile: { hunger: 1.45, thirst: 1.2, hygiene: 1.1, love: 0.95, energy: 1.0, growthMs: 38_000 },
+      focus: ["hunger", "thirst"],
+      profile: { hunger: 1.15, thirst: 1.05, hygiene: 1.0, love: 0.95, energy: 1.0, growthMs: 70_000 },
     },
     {
       id: "kitty", ready: true, name: "Gatinho", he: "ele", names: ["Flofy"],
@@ -40,8 +40,8 @@
       stages: { 1: "newborn", 2: "baby", 3: "child", 4: "child" },
       poses: ["plead", "eat", "sleep", "fall", "bed"], skit: "bed",
       sleepStages: ["child"],
-      trait: "quer colo o tempo todo e dorme fácil",
-      profile: { hunger: 0.95, thirst: 0.85, hygiene: 0.8, love: 1.6, energy: 1.35, growthMs: 48_000 },
+      focus: ["love", "energy"],
+      profile: { hunger: 0.95, thirst: 0.9, hygiene: 0.85, love: 1.15, energy: 1.1, growthMs: 75_000 },
     },
     {
       id: "duck", ready: true, name: "Patinho", he: "ele", names: ["Tobi"],
@@ -49,8 +49,8 @@
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly",
       sleepStages: ["child", "adult"],
-      trait: "bebe muita água e ama banho",
-      profile: { hunger: 1.05, thirst: 1.5, hygiene: 1.35, love: 1.05, energy: 0.95, growthMs: 42_000 },
+      focus: ["thirst", "hygiene"],
+      profile: { hunger: 1.0, thirst: 1.15, hygiene: 1.1, love: 1.0, energy: 0.95, growthMs: 72_000 },
     },
     {
       id: "pig", ready: true, name: "Porquinho", he: "ele", names: ["Pigma"],
@@ -58,8 +58,8 @@
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "mud"], skit: "mud",
       sleepStages: ["child", "adult"],
-      trait: "come bem e se suja rapidinho",
-      profile: { hunger: 1.4, thirst: 1.05, hygiene: 1.8, love: 1.1, energy: 0.9, growthMs: 44_000 },
+      focus: ["hygiene", "hunger"],
+      profile: { hunger: 1.1, thirst: 1.0, hygiene: 1.2, love: 1.0, energy: 0.9, growthMs: 74_000 },
     },
     {
       id: "mole", ready: true, name: "Toupeira", he: "ela", names: ["Toty"],
@@ -67,61 +67,69 @@
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "dig"], skit: "dig",
       sleepStages: ["child", "adult"],
-      trait: "adora cavar e fica sujinha de terra",
-      profile: { hunger: 1.15, thirst: 1.0, hygiene: 1.65, love: 1.2, energy: 1.1, growthMs: 47_000 },
+      focus: ["hygiene", "love"],
+      profile: { hunger: 1.05, thirst: 1.0, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
     },
     {
       id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
       food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
-      trait: "sempre com fominha de cenoura",
-      profile: { hunger: 1.35, thirst: 1.0, hygiene: 0.75, love: 1.25, energy: 1.0, growthMs: 40_000 },
+      focus: ["hunger", "love"],
+      profile: { hunger: 1.15, thirst: 1.0, hygiene: 0.8, love: 1.1, energy: 1.0, growthMs: 70_000 },
     },
     {
       id: "robot", name: "Robôzinho", he: "ele", names: ["Bip", "Chip"],
       food: "🔋", foodName: "bateria", glow: "rgba(120,240,255,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
-      trait: "gasta bateria rápido e quase não se suja",
-      profile: { hunger: 1.5, thirst: 0.4, hygiene: 0.35, love: 0.9, energy: 1.4, growthMs: 50_000 },
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.2, thirst: 0.5, hygiene: 0.4, love: 0.9, energy: 1.15, growthMs: 78_000 },
     },
     {
       id: "hamster", name: "Hamster", he: "ele", names: ["Bolinha", "Paçoca"],
       food: "🌻", foodName: "semente", glow: "rgba(255,210,140,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
-      trait: "come sem parar e cresce depressa",
-      profile: { hunger: 1.55, thirst: 1.1, hygiene: 1.0, love: 1.15, energy: 1.2, growthMs: 35_000 },
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.2, thirst: 1.05, hygiene: 1.0, love: 1.05, energy: 1.1, growthMs: 68_000 },
     },
     {
       id: "panda", name: "Panda", he: "ele", names: ["Mochi", "Bambu"],
       food: "🎋", foodName: "bambu", glow: "rgba(255,255,255,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
-      trait: "come bambu sem parar e cresce devagar",
-      profile: { hunger: 1.5, thirst: 1.0, hygiene: 0.85, love: 1.0, energy: 1.25, growthMs: 60_000 },
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.2, thirst: 1.0, hygiene: 0.9, love: 1.0, energy: 1.1, growthMs: 90_000 },
     },
     {
       id: "puppy", name: "Cachorrinho", he: "ele", names: ["Mel", "Toby"],
       food: "🦴", foodName: "ossinho", glow: "rgba(255,210,150,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
-      trait: "precisa de muito carinho e brinca sem parar",
-      profile: { hunger: 1.2, thirst: 1.15, hygiene: 1.2, love: 1.7, energy: 1.3, growthMs: 40_000 },
+      focus: ["love", "energy"],
+      profile: { hunger: 1.05, thirst: 1.05, hygiene: 1.05, love: 1.2, energy: 1.1, growthMs: 72_000 },
     },
     {
       id: "dragon", name: "Dragãozinho", he: "ele", names: ["Faísca", "Draco"],
       food: "🌶️", foodName: "pimentinha", glow: "rgba(255,150,120,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
-      trait: "come MUITO e tem sede de fogo",
-      profile: { hunger: 1.85, thirst: 1.55, hygiene: 1.0, love: 1.0, energy: 1.15, growthMs: 58_000 },
+      focus: ["hunger", "thirst"],
+      profile: { hunger: 1.25, thirst: 1.2, hygiene: 1.0, love: 1.0, energy: 1.05, growthMs: 85_000 },
     },
     {
       id: "fox", name: "Raposinha", he: "ela", names: ["Canela", "Floco"],
       food: "🫐", foodName: "frutinha", glow: "rgba(255,170,90,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "child" }, poses: [],
-      trait: "esperta, ativa e um pouco independente",
-      profile: { hunger: 1.1, thirst: 1.05, hygiene: 0.9, love: 0.85, energy: 1.4, growthMs: 46_000 },
+      focus: ["energy", "hunger"],
+      profile: { hunger: 1.05, thirst: 1.0, hygiene: 0.95, love: 0.9, energy: 1.15, growthMs: 74_000 },
     },
   ];
 
-  const BASE_RATES = { hunger: 0.42, thirst: 0.46, hygiene: 0.2, love: 0.34, energy: 0.26 };
+  const BASE_RATES = { hunger: 0.38, thirst: 0.42, hygiene: 0.18, love: 0.3, energy: 0.24 };
+
+  const TRAIT_LINES = {
+    hunger: { icon: "🍎", text: "Eu sinto muita fome!" },
+    thirst: { icon: "💧", text: "Eu preciso beber muita água!" },
+    hygiene: { icon: "🛁", text: "Eu me sujo muito!" },
+    love: { icon: "💗", text: "Eu preciso de muito carinho!" },
+    energy: { icon: "🌙", text: "Eu preciso dormir muito!" },
+  };
 
   const NEEDS = {
     hunger: { key: "2", icon: "🍓", text: (p) => `${p} está com fome! Aperte 🍓 Comer` },
@@ -134,6 +142,7 @@
   const $ = (id) => document.getElementById(id);
   const el = {
     app: $("app"), fx: $("fx"), avatar: $("avatar"), petName: $("petName"), petStage: $("petStage"),
+    traitBanner: $("traitBanner"),
     clockIcon: $("clockIcon"), clockTime: $("clockTime"),
     actor: $("actor"), actorMove: $("actorMove"), actorImg: $("actorImg"), actorFx: $("actorFx"), actorGlow: $("actorGlow"),
     bubble: $("bubble"), wish: $("wish"), wishIcon: $("wishIcon"), guide: $("guide"),
@@ -152,6 +161,8 @@
     mood: "neutral", moodLock: 0, sleeping: false,
     pose: null, busy: false, nextSkit: Infinity,
     growthIntervalMs: DEMO.growthIntervalMs, lackMs: 0,
+    boosts: { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 },
+    strongTraits: [],
     hatchBag: [],
     dayStart: performance.now(), lastGrowth: performance.now(), last: performance.now(),
     fxTimer: 0, preview: null,
@@ -188,6 +199,40 @@
     const saved = JSON.parse(localStorage.getItem("bichinho-hatch-bag") || "[]");
     if (Array.isArray(saved)) state.hatchBag = saved.filter((id) => readySpecies().some((s) => s.id === id));
   } catch (_) { /* ignore */ }
+
+  function rollStrongTraits(sp) {
+    const pool = [...(sp.focus || ["hunger", "love"])];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const count = Math.random() < 0.45 ? 1 : 2;
+    const picked = pool.slice(0, Math.min(count, pool.length));
+    const boosts = { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 };
+    picked.forEach((k) => { boosts[k] = 2; });
+    return {
+      boosts,
+      strongTraits: picked,
+      phrases: picked.map((k) => TRAIT_LINES[k]),
+    };
+  }
+
+  function traitBannerText() {
+    if (!state.strongTraits?.length) return "";
+    return state.strongTraits
+      .map((k) => `${TRAIT_LINES[k].icon} ${TRAIT_LINES[k].text}`)
+      .join("  ·  ");
+  }
+
+  function renderTraitBanner() {
+    if (!el.traitBanner) return;
+    if (state.phase !== "pet" || !state.strongTraits?.length) {
+      el.traitBanner.hidden = true;
+      return;
+    }
+    el.traitBanner.hidden = false;
+    el.traitBanner.textContent = traitBannerText();
+  }
 
   // ---------- Art selection ----------
   function hasPose(pose) {
@@ -367,6 +412,7 @@
     el.avatar.style.backgroundImage = `url(${baseArt(state.species, 1)})`;
     el.petName.textContent = state.name;
     el.petStage.textContent = `${state.species.name} · ${STAGE_LABELS[state.stage]}`;
+    renderTraitBanner();
   }
   function renderGrowth(frac = 0) {
     el.growthFill.style.width = `${clamp(((state.stage + frac) / 4) * 100, 0, 100)}%`;
@@ -466,7 +512,7 @@
       return setGuide(text, need.key, icon, n[worst] < 25);
     }
     if (night) return setGuide(`Está de noite… hora de nanar? 🌙`, "6", "🌙");
-    setGuide(`${p} está feliz! (${state.species.trait}) 💕`);
+    setGuide(`${p} está feliz! Faça carinho passando o dedo 💕`);
   }
 
   // ---------- Clumsy baby skits ----------
@@ -576,6 +622,7 @@
     // Escolhe o bichinho em segredo — o jogador ainda não vê.
     species = species || pickHatchSpecies();
     preload(species);
+    const rolled = rollStrongTraits(species);
 
     const steps = [
       { crack: 1, say: "Crec…", ms: 900 },
@@ -598,7 +645,9 @@
     Object.assign(state, {
       phase: "pet", stage: 1, species, name: pick(species.names),
       lastGrowth: performance.now(), eggCrack: 0, pose: null, lackMs: 0,
-      growthIntervalMs: Math.round((species.profile?.growthMs || DEMO.growthIntervalMs) * (0.88 + Math.random() * 0.24)),
+      boosts: rolled.boosts,
+      strongTraits: rolled.strongTraits,
+      growthIntervalMs: Math.round((species.profile?.growthMs || DEMO.growthIntervalMs) * (0.92 + Math.random() * 0.16)),
     });
     el.app.dataset.phase = "pet";
     el.actor.classList.remove("hatch-burst", "crack-shake");
@@ -609,8 +658,11 @@
     el.btn1Text.textContent = "Acordar";
     setMood("happy", 2000);
     rain(["✨", "💖", "⭐"], 10);
-    say(`Surpresa! Eu sou ${state.name}! 💖`, 2800);
-    setTimeout(() => say(`${state.species.trait[0].toUpperCase()}${state.species.trait.slice(1)}.`, 3200), 2900);
+    say(`Surpresa! Eu sou ${state.name}! 💖`, 2600);
+    setTimeout(() => {
+      const line = rolled.phrases.map((p) => p.text).join(" ");
+      say(line, 4200);
+    }, 2700);
     state.nextSkit = performance.now() + 3200;
   }
 
@@ -632,12 +684,13 @@
   function decayRates() {
     const stage = stageNeedMult();
     const pr = state.species?.profile || {};
+    const b = state.boosts || {};
     return {
-      hunger: BASE_RATES.hunger * stage * (pr.hunger || 1),
-      thirst: BASE_RATES.thirst * stage * (pr.thirst || 1),
-      hygiene: BASE_RATES.hygiene * stage * (pr.hygiene || 1),
-      love: BASE_RATES.love * stage * (pr.love || 1),
-      energy: state.sleeping ? -5 : BASE_RATES.energy * stage * (pr.energy || 1),
+      hunger: BASE_RATES.hunger * stage * (pr.hunger || 1) * (b.hunger || 1),
+      thirst: BASE_RATES.thirst * stage * (pr.thirst || 1) * (b.thirst || 1),
+      hygiene: BASE_RATES.hygiene * stage * (pr.hygiene || 1) * (b.hygiene || 1),
+      love: BASE_RATES.love * stage * (pr.love || 1) * (b.love || 1),
+      energy: state.sleeping ? -5 : BASE_RATES.energy * stage * (pr.energy || 1) * (b.energy || 1),
     };
   }
 
@@ -879,6 +932,17 @@
     }
     Object.assign(state, { phase: "pet", species: sp || SPECIES[0], stage: clamp(Number(q.get("stage")) || 1, 1, 4) });
     state.name = q.get("name") || state.species.names[0];
+    const rolled = rollStrongTraits(state.species);
+    if (q.get("trait")) {
+      const keys = q.get("trait").split(",").filter((k) => TRAIT_LINES[k]);
+      if (keys.length) {
+        rolled.strongTraits = keys;
+        rolled.boosts = { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 };
+        keys.forEach((k) => { rolled.boosts[k] = 2; });
+      }
+    }
+    state.boosts = rolled.boosts;
+    state.strongTraits = rolled.strongTraits;
     state.growthIntervalMs = state.species.profile?.growthMs || DEMO.growthIntervalMs;
     state.lackMs = 0;
     el.app.dataset.phase = "pet";
