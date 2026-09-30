@@ -3,22 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#ff8fab" />
+  <meta name="theme-color" content="#ff8fab" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a0f2e" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Bichinho" />
-  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="application-name" content="Bichinho Mágico" />
+  <meta name="format-detection" content="telephone=no" />
   <title>Bichinho Mágico</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/icon-167.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/icon-120.png" />
+  <!-- iOS splash screens -->
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/iphone14.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/iphone15pro.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/iphone14plus.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/iphone15promax.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/ipadmini.png" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/ipad10.png" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/ipadpro11.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" />
+  <link rel="apple-touch-startup-image" href="assets/icons/splash/ipadpro129.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="ios-install" id="iosInstall" hidden>
+    <button type="button" class="ios-install-close" id="iosInstallClose" aria-label="Fechar">×</button>
+    <p><strong>Instalar no iPhone / iPad</strong></p>
+    <ol>
+      <li>Toque em <span class="ios-share">□↑ Compartilhar</span></li>
+      <li>Role e toque em <strong>Adicionar à Tela de Início</strong></li>
+      <li>Confirme em <strong>Adicionar</strong></li>
+    </ol>
+  </div>
   <main class="device" id="app" data-period="day" data-phase="egg">
     <div class="scene">
       <div class="scene-bg" id="sceneBg"></div>
@@ -77,7 +101,7 @@
         <div class="thermo-knob" id="thermoKnob"></div>
       </div>
       <div class="thermo-progress"><i id="hatchFill"></i></div>
-      <p class="thermo-hint" id="thermoHint">Esfregue o ovo (ou segure <kbd>1</kbd>) para aquecer</p>
+      <p class="thermo-hint" id="thermoHint">Esfregue o ovo com o dedo para aquecer</p>
     </section>
 
     <nav class="dock" id="dock">
@@ -94,7 +118,7 @@
         <li data-i="0">🥚</li><li data-i="1">Bebê</li><li data-i="2">Criança</li><li data-i="3">Jovem</li><li data-i="4">Adulto</li>
       </ol>
       <div class="growth-bar"><i id="growthFill"></i></div>
-      <p class="meta">Demo · 1 dia ≈ 2 min · cresce a cada ~45 s · teste: <kbd>0</kbd> novo ovo <kbd>7</kbd> fome <kbd>8</kbd> trapalhada <kbd>9</kbd> crescer · <span id="appVersion">V0.1.12</span></p>
+      <p class="meta">Demo · 1 dia ≈ 2 min · cresce a cada ~45 s · teste: <kbd>0</kbd> novo ovo <kbd>7</kbd> fome <kbd>8</kbd> trapalhada <kbd>9</kbd> crescer · <span id="appVersion">V0.1.13</span></p>
     </footer>
 
     <div class="flash" id="flash"></div>
@@ -102,11 +126,44 @@
   </main>
   <script src="game.js"></script>
   <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(() => {});
+    (function () {
+      const ua = navigator.userAgent || "";
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const isStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+      const isTouch = matchMedia("(hover: none) and (pointer: coarse)").matches || "ontouchstart" in window;
+
+      if (isTouch) document.body.classList.add("touch");
+      if (isIOS) document.body.classList.add("ios");
+      if (isStandalone) document.body.classList.add("ios-standalone");
+
+      // Evita “puxar” a página no Safari iOS
+      document.addEventListener("touchmove", (e) => {
+        if (e.target.closest(".actor")) return;
+        if (e.touches.length > 1) e.preventDefault();
+      }, { passive: false });
+
+      const tip = document.getElementById("iosInstall");
+      const close = document.getElementById("iosInstallClose");
+      if (tip && isIOS && !isStandalone) {
+        try {
+          if (!localStorage.getItem("bichinho-ios-tip-done")) {
+            tip.hidden = false;
+          }
+        } catch (_) {
+          tip.hidden = false;
+        }
+      }
+      close?.addEventListener("click", () => {
+        tip.hidden = true;
+        try { localStorage.setItem("bichinho-ios-tip-done", "1"); } catch (_) {}
       });
-    }
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        });
+      }
+    })();
   </script>
 </body>
 </html>

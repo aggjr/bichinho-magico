@@ -10,7 +10,12 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   font-family: var(--body);
@@ -18,11 +23,14 @@ body {
   background: radial-gradient(ellipse at 50% 20%, #3b2a5c 0%, #150d24 70%);
   display: grid;
   place-items: center;
-  min-height: 100vh;
+  min-height: 100%;
+  min-height: 100dvh;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 kbd {
@@ -72,9 +80,94 @@ kbd {
     border-radius: 0;
     box-shadow: none;
     padding-top: max(12px, env(safe-area-inset-top));
+    padding-right: max(16px, env(safe-area-inset-right));
     padding-bottom: max(10px, env(safe-area-inset-bottom));
+    padding-left: max(16px, env(safe-area-inset-left));
   }
   .meta { display: none; }
+}
+
+/* iOS Safari adicionado à tela inicial (navigator.standalone) */
+body.ios-standalone {
+  background: #150d24;
+}
+body.ios-standalone .device {
+  width: 100vw;
+  height: 100vh;
+  height: -webkit-fill-available;
+  height: 100dvh;
+  max-height: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: max(14px, env(safe-area-inset-top));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+}
+body.ios-standalone .meta,
+body.touch .meta,
+body.touch .btn .k { display: none; }
+
+/* iPhone / iPad em tela cheia no navegador também */
+@media (max-width: 920px) {
+  .device {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+    padding-top: max(10px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+/* iPad: botões e gauges um pouco maiores */
+@media (min-width: 768px) and (max-width: 1200px) {
+  .btn { height: clamp(72px, 11vh, 110px); border-radius: 28px; }
+  .btn .i { font-size: clamp(1.8rem, 3.8vh, 2.6rem); }
+  .btn .t { font-size: clamp(0.85rem, 2vh, 1.1rem); }
+  .gauge { --gs: clamp(48px, 7vh, 64px); }
+  .guide { font-size: clamp(1.1rem, 2.4vh, 1.45rem); }
+}
+
+/* ---------- Install tip (Safari iOS) ---------- */
+.ios-install {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  translate: -50% 0;
+  z-index: 200;
+  width: min(92vw, 420px);
+  padding: 16px 18px 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+  box-shadow: 0 16px 40px rgba(40, 10, 60, 0.35);
+  font-family: var(--body);
+  animation: guide-in 0.45s var(--ease-bounce);
+}
+.ios-install strong { font-family: var(--display); font-size: 1.15rem; }
+.ios-install ol { margin: 10px 0 0 1.1rem; font-weight: 800; font-size: 0.92rem; line-height: 1.45; }
+.ios-install-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+.ios-share {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: #eef2ff;
+  font-weight: 900;
 }
 
 /* ---------- Scene ---------- */

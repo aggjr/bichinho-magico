@@ -1,26 +1,26 @@
-# Bichinho Mágico — deploy no tablet Android
+# Bichinho Mágico — instalar no tablet / celular
 
-## O que foi preparado
-O jogo é um **PWA** (Progressive Web App): no tablet Android ele instala como aplicativo, com ícone na tela inicial, tela cheia e funciona offline depois da primeira abertura.
+Endereço: **https://aggjr.github.io/bichinho-magico/**
 
-## Endereço (depois do publish)
-https://aggjr.github.io/bichinho-magico/
+## Android (Chrome)
+1. Abra o link no Chrome.
+2. Menu **⋮** → **Instalar aplicativo** (ou **Adicionar à tela inicial**).
+3. Abra pelo ícone **Bichinho** — tela cheia.
 
-## Como instalar no tablet Android
-1. Abra o Chrome no tablet.
-2. Entre no endereço acima.
-3. Toque no menu **⋮** → **Instalar aplicativo** (ou **Adicionar à tela inicial**).
-4. Confirme. O ícone **Bichinho** aparece na tela inicial.
-5. Abra pelo ícone — abre em tela cheia, sem barra do navegador.
+## iPhone / iPad (Safari)
+1. Abra o link no **Safari** (não use Chrome no iPhone para instalar).
+2. Toque em **Compartilhar** (quadrado com seta para cima).
+3. Role e toque em **Adicionar à Tela de Início**.
+4. Toque em **Adicionar**.
+5. Abra pelo ícone **Bichinho** — abre como app, com barra de status transparente.
 
-## Como republicar depois de mudanças
-No computador, na pasta do projeto:
+No primeiro acesso pelo Safari, aparece um cartão com esses passos. Depois de instalar, o cartão some.
 
+## Republicar atualizações
 ```bash
 node scripts/bump-app-version.js
 git add -A
 git commit -m "atualiza o jogo"
 git push
 ```
-
-O GitHub Pages atualiza em 1–2 minutos. No tablet, abra o app e puxe para atualizar, ou feche e abra de novo.
+No aparelho, feche o app e abra de novo (ou atualize a página no Safari).
