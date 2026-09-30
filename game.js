@@ -71,6 +71,15 @@
       profile: { hunger: 1.05, thirst: 1.0, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
     },
     {
+      id: "bat", ready: true, name: "Morceguinho", he: "ele", names: ["Smytyi"],
+      food: "🫐", foodName: "mirtilinho", glow: "rgba(160,140,220,.65)",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "fly"], skit: "fly", childSkit: "fly", adultSkit: "fly",
+      sleepStages: ["child", "adult"],
+      focus: ["energy", "love"],
+      profile: { hunger: 1.05, thirst: 1.0, hygiene: 0.95, love: 1.15, energy: 1.2, growthMs: 76_000 },
+    },
+    {
       id: "racer", ready: true, name: "Carrinho", he: "ele", names: ["Turbo"],
       food: "🔧", foodName: "peçinhas", glow: "rgba(255,120,100,.65)",
       diet: "machine",
