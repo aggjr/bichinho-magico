@@ -143,6 +143,7 @@
     mood: "neutral", moodLock: 0, sleeping: false,
     pose: null, busy: false, nextSkit: Infinity,
     growthIntervalMs: DEMO.growthIntervalMs, lackMs: 0,
+    hatchBag: [],
     dayStart: performance.now(), lastGrowth: performance.now(), last: performance.now(),
     fxTimer: 0, preview: null,
   };
@@ -150,6 +151,34 @@
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function readySpecies() {
+    return SPECIES.filter((s) => s.ready);
+  }
+
+  // Sorteio justo: todos os bichinhos liberados saem uma vez antes de repetir.
+  function pickHatchSpecies() {
+    const ready = readySpecies();
+    if (!ready.length) return SPECIES[0];
+    if (!state.hatchBag.length) {
+      state.hatchBag = ready.map((s) => s.id);
+      // Embaralha
+      for (let i = state.hatchBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.hatchBag[i], state.hatchBag[j]] = [state.hatchBag[j], state.hatchBag[i]];
+      }
+    }
+    const id = state.hatchBag.pop();
+    try {
+      localStorage.setItem("bichinho-hatch-bag", JSON.stringify(state.hatchBag));
+    } catch (_) { /* ignore */ }
+    return ready.find((s) => s.id === id) || ready[0];
+  }
+
+  try {
+    const saved = JSON.parse(localStorage.getItem("bichinho-hatch-bag") || "[]");
+    if (Array.isArray(saved)) state.hatchBag = saved.filter((id) => readySpecies().some((s) => s.id === id));
+  } catch (_) { /* ignore */ }
 
   // ---------- Art selection ----------
   function hasPose(pose) {
@@ -524,7 +553,7 @@
     updateGuide();
 
     // Escolhe o bichinho em segredo — o jogador ainda não vê.
-    species = species || pick(SPECIES.filter((s) => s.ready));
+    species = species || pickHatchSpecies();
     preload(species);
 
     const steps = [
@@ -786,7 +815,11 @@
   addEventListener("keydown", (e) => {
     if (e.repeat) return;
     if (/^[1-6]$/.test(e.key)) press(e.key);
-    if (e.key === "0") location.href = location.pathname;
+    if (e.key === "0") {
+      try { localStorage.removeItem("bichinho-hatch-bag"); } catch (_) {}
+      location.href = "index.html";
+      return;
+    }
     if (e.key === "9" && state.phase === "pet") { state.lastGrowth = performance.now(); grow(); }
     if (e.key === "8" && state.phase === "pet") { const s = skitForStage(); if (s) skit(s); }
     if (e.key === "7" && state.phase === "pet") { Object.assign(state.needs, { hunger: 15, thirst: 30, love: 25 }); }
