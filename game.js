@@ -71,6 +71,26 @@
       profile: { hunger: 1.05, thirst: 1.0, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
     },
     {
+      id: "racer", ready: true, name: "Carrinho", he: "ele", names: ["Turbo"],
+      food: "🔧", foodName: "peçinhas", glow: "rgba(255,120,100,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "turbo"], skit: "turbo", childSkit: "turbo", adultSkit: "turbo",
+      sleepStages: ["child", "adult"],
+      focus: ["hunger", "thirst"],
+      profile: { hunger: 1.2, thirst: 1.25, hygiene: 1.1, love: 1.0, energy: 1.05, growthMs: 78_000 },
+    },
+    {
+      id: "botcar", ready: true, name: "Transformers", he: "ele", names: ["Bolt"],
+      food: "🔩", foodName: "parafusos", glow: "rgba(120,180,255,.65)",
+      diet: "machine",
+      stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
+      poses: ["plead", "eat", "sleep", "fall", "car"], skit: "transform", childSkit: "transform", adultSkit: "transform",
+      sleepStages: ["child", "adult"],
+      focus: ["hunger", "energy"],
+      profile: { hunger: 1.15, thirst: 1.2, hygiene: 0.85, love: 0.95, energy: 1.15, growthMs: 82_000 },
+    },
+    {
       id: "bunny", name: "Coelhinha", he: "ela", names: ["Algodão", "Pipoca"],
       food: "🥕", foodName: "cenoura", glow: "rgba(255,210,230,.6)",
       stages: { 1: "baby", 2: "baby", 3: "child", 4: "adult" }, poses: [],
@@ -131,6 +151,14 @@
     energy: { icon: "🌙", text: "Eu preciso dormir muito!" },
   };
 
+  const TRAIT_LINES_MACHINE = {
+    hunger: { icon: "🔧", text: "Eu preciso de muitas peças!" },
+    thirst: { icon: "⛽", text: "Eu preciso de muito óleo!" },
+    hygiene: { icon: "🧽", text: "Eu fico bem enlameado!" },
+    love: { icon: "💗", text: "Eu preciso de muito carinho!" },
+    energy: { icon: "🔋", text: "Eu preciso recarregar muito!" },
+  };
+
   const NEEDS = {
     hunger: { key: "2", icon: "🍓", text: (p) => `${p} está com fome! Aperte 🍓 Comer` },
     thirst: { key: "3", icon: "💧", text: (p) => `${p} está com sede! Aperte 💧 Beber` },
@@ -138,6 +166,24 @@
     love: { key: "5", icon: "💗", text: (p) => `${p} quer colo! Aperte 🤗 Carinho` },
     energy: { key: "6", icon: "🌙", text: (p) => `${p} está com soninho… Aperte 🌙 Dormir` },
   };
+
+  const NEEDS_MACHINE = {
+    hunger: { key: "2", icon: "🔧", text: (p) => `${p} precisa de peças! Aperte 🔧 Peças` },
+    thirst: { key: "3", icon: "⛽", text: (p) => `${p} precisa de óleo! Aperte ⛽ Óleo` },
+    hygiene: { key: "4", icon: "🧽", text: (p) => `${p} está sujo de lama! Aperte 🛁 Banho` },
+    love: { key: "5", icon: "💗", text: (p) => `${p} quer colo! Aperte 🤗 Carinho` },
+    energy: { key: "6", icon: "🔋", text: (p) => `${p} precisa recarregar… Aperte 🌙 Dormir` },
+  };
+
+  function isMachine() {
+    return state.species?.diet === "machine";
+  }
+  function needsMap() {
+    return isMachine() ? NEEDS_MACHINE : NEEDS;
+  }
+  function traitLines() {
+    return isMachine() ? TRAIT_LINES_MACHINE : TRAIT_LINES;
+  }
 
   const $ = (id) => document.getElementById(id);
   const el = {
@@ -210,18 +256,42 @@
     const picked = pool.slice(0, Math.min(count, pool.length));
     const boosts = { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 };
     picked.forEach((k) => { boosts[k] = 2; });
+    const lines = traitLinesFor(sp);
     return {
       boosts,
       strongTraits: picked,
-      phrases: picked.map((k) => TRAIT_LINES[k]),
+      phrases: picked.map((k) => lines[k]),
     };
+  }
+
+  function traitLinesFor(sp) {
+    return sp?.diet === "machine" ? TRAIT_LINES_MACHINE : TRAIT_LINES;
   }
 
   function traitBannerText() {
     if (!state.strongTraits?.length) return "";
+    const lines = traitLines();
     return state.strongTraits
-      .map((k) => `${TRAIT_LINES[k].icon} ${TRAIT_LINES[k].text}`)
+      .map((k) => `${lines[k].icon} ${lines[k].text}`)
       .join("  ·  ");
+  }
+
+  function applyDietUI() {
+    const machine = isMachine();
+    const hungerIcon = machine ? "🔧" : (state.species?.food || "🍓");
+    const thirstIcon = machine ? "⛽" : "💧";
+    const $ih = $("iconHunger"); const $lh = $("labelHunger");
+    const $it = $("iconThirst"); const $lt = $("labelThirst");
+    const $b2i = $("btn2Icon"); const $b2t = $("btn2Text");
+    const $b3i = $("btn3Icon"); const $b3t = $("btn3Text");
+    if ($ih) $ih.textContent = hungerIcon;
+    if ($lh) $lh.textContent = machine ? "Peças" : "Fome";
+    if ($it) $it.textContent = thirstIcon;
+    if ($lt) $lt.textContent = machine ? "Óleo" : "Sede";
+    if ($b2i) $b2i.textContent = hungerIcon;
+    if ($b2t) $b2t.textContent = machine ? "Peças" : "Comer";
+    if ($b3i) $b3i.textContent = thirstIcon;
+    if ($b3t) $b3t.textContent = machine ? "Óleo" : "Beber";
   }
 
   function renderTraitBanner() {
@@ -236,7 +306,10 @@
 
   // ---------- Art selection ----------
   function hasPose(pose) {
-    return state.stage === 1 && state.species.poses.includes(pose);
+    if (!state.species?.poses?.includes(pose)) return false;
+    // Poses especiais de máquina (turbo / forma carro) valem em qualquer fase
+    if (pose === "car" || pose === "turbo") return true;
+    return state.stage === 1;
   }
   function baseArt(sp, stage) {
     return `${ART}${sp.id}_${sp.stages[stage]}.webp`;
@@ -412,6 +485,7 @@
     el.avatar.style.backgroundImage = `url(${baseArt(state.species, 1)})`;
     el.petName.textContent = state.name;
     el.petStage.textContent = `${state.species.name} · ${STAGE_LABELS[state.stage]}`;
+    applyDietUI();
     renderTraitBanner();
   }
   function renderGrowth(frac = 0) {
@@ -485,9 +559,10 @@
     if (state.mood === "sad") {
       const n = state.needs;
       const worst = ["hunger", "thirst", "hygiene", "love", "energy"].sort((a, b) => n[a] - n[b])[0];
-      const need = NEEDS[worst];
+      const need = needsMap()[worst];
       const icon = worst === "hunger" ? state.species.food : need.icon;
-      return setGuide(`${p} está triste… ${worst === "hunger" ? `Quer ${state.species.foodName}!` : need.text(p)}`, need.key, icon, true);
+      const sadHunger = isMachine() ? `Quer ${state.species.foodName}!` : `Quer ${state.species.foodName}!`;
+      return setGuide(`${p} está triste… ${worst === "hunger" ? sadHunger : need.text(p)}`, need.key, icon, true);
     }
 
     const n = state.needs;
@@ -495,20 +570,22 @@
     // Limiares um pouco mais baixos no traço forte do animal
     const pr = state.species.profile || {};
     const limits = {
-      hunger: pr.hunger > 1.3 ? 50 : 42,
-      thirst: pr.thirst > 1.3 ? 50 : 42,
-      hygiene: pr.hygiene > 1.3 ? 42 : 32,
-      love: pr.love > 1.3 ? 50 : 42,
-      energy: night ? 60 : (pr.energy > 1.2 ? 32 : 24),
+      hunger: pr.hunger > 1.3 || state.boosts?.hunger > 1 ? 50 : 42,
+      thirst: pr.thirst > 1.3 || state.boosts?.thirst > 1 ? 50 : 42,
+      hygiene: pr.hygiene > 1.3 || state.boosts?.hygiene > 1 ? 42 : 32,
+      love: pr.love > 1.3 || state.boosts?.love > 1 ? 50 : 42,
+      energy: night ? 60 : (pr.energy > 1.2 || state.boosts?.energy > 1 ? 32 : 24),
     };
     let worst = null;
     for (const k of Object.keys(limits)) {
       if (n[k] < limits[k] && (!worst || n[k] - limits[k] < n[worst] - limits[worst])) worst = k;
     }
     if (worst) {
-      const need = NEEDS[worst];
+      const need = needsMap()[worst];
       const icon = worst === "hunger" ? state.species.food : need.icon;
-      const text = worst === "hunger" ? `${p} está com fome! Aperte ${state.species.food} Comer` : need.text(p);
+      const text = worst === "hunger"
+        ? (isMachine() ? `${p} precisa de peças! Aperte ${state.species.food} Peças` : `${p} está com fome! Aperte ${state.species.food} Comer`)
+        : need.text(p);
       return setGuide(text, need.key, icon, n[worst] < 25);
     }
     if (night) return setGuide(`Está de noite… hora de nanar? 🌙`, "6", "🌙");
@@ -574,6 +651,27 @@
         rain(["⭐", "💫"], 3, "float", 20);
         say("Ops! Cavei demais! 🙈", 1800);
         await wait(1800);
+      } else if (kind === "turbo") {
+        state.pose = state.stage >= 3 && state.species.poses.includes("turbo") ? "turbo" : null;
+        renderActor();
+        say(state.stage === 1 ? "Vruum? 🍼" : "VRUUUM! 🏁", 1500);
+        await playMove("wobble", 700);
+        await playMove("rear", 1200);
+        rain(["💨", "⭐", "🔥"], 8);
+        say(state.stage >= 4 ? "Escapamento ligado! 🔥" : "Quase voei!", 1800);
+        await wait(1600);
+      } else if (kind === "transform") {
+        say("Transformar! ⚡", 1200);
+        state.pose = "car"; renderActor();
+        await playMove("wobble", 900);
+        rain(["⚡", "✨", "🔩"], 8);
+        say("Agora sou carro! 🚗", 1400);
+        await wait(1600);
+        state.pose = null; renderActor();
+        await playMove("rear", 1000);
+        rain(["⚡", "🤖"], 5);
+        say("E de volta a robô! 🤖", 1600);
+        await wait(1400);
       } else if (kind === "rear") {
         say("Iiiirrí! 🌈", 1600);
         rain(["✨", "🌈", "⭐"], 8);
@@ -711,7 +809,7 @@
     const relieve = (key) => { state.over[key] = Math.max(0, state.over[key] - 1); };
 
     if (kind === "feed") {
-      if (tooMuch("hunger", 92, "Minha barriguinha tá cheia! 😣")) return;
+      if (tooMuch("hunger", 92, isMachine() ? "Já tenho peças demais! 🔧" : "Minha barriguinha tá cheia! 😣")) return;
       state.busy = true;
       await throwTo("2", state.species.food);
       n.hunger = clamp(n.hunger + boost + 8, 0, 100);
@@ -719,19 +817,19 @@
       state.pose = "eat"; renderActor();
       el.actor.dataset.mood = "neutral";
       playMove("munch", 2200);
-      say(`Nham nham! Amo ${state.species.foodName}! 😋`, 2200);
+      say(isMachine() ? `Clinc clanc! Amo ${state.species.foodName}! 🔧` : `Nham nham! Amo ${state.species.foodName}! 😋`, 2200);
       for (let i = 0; i < 5; i++) setTimeout(() => fx("float", pick(["✨", state.species.food, "💛"]), { x: 40 + Math.random() * 20, y: 45, dx: (Math.random() - 0.5) * 90 }), i * 300);
       await wait(2300);
       state.pose = null; state.busy = false;
     } else if (kind === "drink") {
-      if (tooMuch("thirst", 92, "Chega de água! 💦")) return;
+      if (tooMuch("thirst", 92, isMachine() ? "Tanque cheio! ⛽" : "Chega de água! 💦")) return;
       state.busy = true;
-      await throwTo("3", state.stage <= 2 ? "🍼" : "🥛");
+      await throwTo("3", isMachine() ? "⛽" : (state.stage <= 2 ? "🍼" : "🥛"));
       n.thirst = clamp(n.thirst + boost + 10, 0, 100);
       relieve("thirst");
       playMove("munch", 1500);
-      rain(["💧", "💦"], 5);
-      say(pick(["Glub glub glub!", "Ahhh, geladinho!", "Hmmm, que bom!"]), 2000);
+      rain(isMachine() ? ["⛽", "🛢️", "✨"] : ["💧", "💦"], 5);
+      say(isMachine() ? pick(["Glup de óleo!", "Motor feliz!", "Abastecido!"]) : pick(["Glub glub glub!", "Ahhh, geladinho!", "Hmmm, que bom!"]), 2000);
       await wait(1500);
       state.busy = false;
     } else if (kind === "bath") {
@@ -934,7 +1032,7 @@
     state.name = q.get("name") || state.species.names[0];
     const rolled = rollStrongTraits(state.species);
     if (q.get("trait")) {
-      const keys = q.get("trait").split(",").filter((k) => TRAIT_LINES[k]);
+      const keys = q.get("trait").split(",").filter((k) => TRAIT_LINES[k] || TRAIT_LINES_MACHINE[k]);
       if (keys.length) {
         rolled.strongTraits = keys;
         rolled.boosts = { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 };
