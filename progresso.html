@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="refresh" content="8" />
-  <title>Progresso — Bichinho Mágico</title>
+  <title>Progresso — Pixel Play</title>
   <style>
     :root { --ink:#2a1830; --track:#e8dce8; --fill:#ff6b9d; }
     body {
@@ -51,7 +50,7 @@
       <span class="pct" id="pct">0%</span>
     </div>
     <ul id="list"></ul>
-    <p class="foot">Atualiza sozinho a cada 8s · arquivo <code>progress.json</code></p>
+    <p class="foot">Atualiza só com a aba aberta · a cada 15s · <code>progress.json</code></p>
   </div>
   <script>
     async function load() {
@@ -71,6 +70,7 @@
       }
     }
     load();
+    setInterval(() => { if (!document.hidden) load(); }, 15000);
   </script>
 </body>
 </html>

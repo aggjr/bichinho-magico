@@ -1,15 +1,13 @@
 ﻿{
-  "title": "Publicar 10 PIXELs novos",
+  "title": "Brinquedo + ritmo 1/3",
   "percent": 100,
-  "step": 5,
-  "steps": 5,
-  "action": "Pronto — galeria aberta no Chrome",
-  "updatedAt": "2026-09-30T20:46:13.8019027-03:00",
+  "step": 3,
+  "steps": 3,
+  "action": "Toy sync + PACE=3 + doente rejeita · V0.1.40",
+  "updatedAt": "2026-10-01T12:05:00-03:00",
   "checklist": [
-    { "done": true, "text": "Arte gerada (Rabi→Lilica)" },
-    { "done": true, "text": "Chroma-key → webp (121/121)" },
-    { "done": true, "text": "SPECIES + skits no game.js" },
-    { "done": true, "text": "Commit + push" },
-    { "done": true, "text": "Abrir galeria no Chrome" }
+    { "done": true, "text": "syncToyUI ao escolher brinquedo" },
+    { "done": true, "text": "Demandas e crescimento 3× mais lentos" },
+    { "done": true, "text": "Doente rejeita comida e brincar" }
   ]
 }

@@ -1,7 +1,7 @@
 {
-  "name": "Bichinho Mágico",
-  "short_name": "Bichinho",
-  "description": "Cuide do seu bichinho mágico: aqueça o ovo, alimente, faça carinho e veja ele crescer!",
+  "name": "Pixel Play",
+  "short_name": "Pixel Play",
+  "description": "Pixel Play — aqueça o ovo, cuide do seu PIXEL, vista, brinque e veja ele crescer!",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

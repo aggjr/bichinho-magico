@@ -2,12 +2,15 @@
   "use strict";
 
   const DEMO = {
-    dayLengthMs: 120_000,
-    growthIntervalMs: 45_000,
+    dayLengthMs: 360_000,       // 1 dia ≈ 6 min (antes 2 min)
+    growthIntervalMs: 135_000,  // ~2,25 min por fase (antes 45 s)
     idealMin: 48,
     idealMax: 66,
     hatchSeconds: 4,
   };
+
+  // Ritmo geral: 1 = original; 3 = 3× mais lento (demandas + crescimento)
+  const PACE = 3;
 
   const ART = "assets/pets/";
   const STAGE_LABELS = ["Ovo", "Bebê", "Criança", "Jovem", "Adulto"];
@@ -313,7 +316,63 @@
     },
   ];
 
-  const BASE_RATES = { hunger: 0.38, thirst: 0.42, hygiene: 0.18, love: 0.3, energy: 0.24 };
+  const BASE_RATES = {
+    hunger: 0.38 / PACE,
+    thirst: 0.42 / PACE,
+    hygiene: 0.18 / PACE,
+    love: 0.3 / PACE,
+    energy: 0.24 / PACE,
+    health: 0.08 / PACE,
+  };
+
+  // Armário: brinquedos + roupas + fantasias (overlays emoji; tudo liberado)
+  const CLOSET_ITEMS = [
+    { id: "toy_ball", tab: "toys", emoji: "🎾", name: "Bolinha" },
+    { id: "toy_yarn", tab: "toys", emoji: "🧶", name: "Novelo" },
+    { id: "toy_bone", tab: "toys", emoji: "🦴", name: "Ossinho" },
+    { id: "toy_carrot", tab: "toys", emoji: "🥕", name: "Cenoura" },
+    { id: "toy_star", tab: "toys", emoji: "⭐", name: "Estrelinha" },
+    { id: "toy_balloon", tab: "toys", emoji: "🎈", name: "Balão" },
+    { id: "toy_frisbee", tab: "toys", emoji: "🥏", name: "Disco" },
+    { id: "toy_robot", tab: "toys", emoji: "🤖", name: "Robôzinho" },
+    { id: "toy_rocket", tab: "toys", emoji: "🚀", name: "Foguetinho" },
+    { id: "toy_fish", tab: "toys", emoji: "🐟", name: "Peixinho" },
+    { id: "toy_pudding", tab: "toys", emoji: "🍮", name: "Pudim" },
+    { id: "toy_flag", tab: "toys", emoji: "🏁", name: "Bandeirinha" },
+    { id: "hat_crown", tab: "clothes", slot: "hat", emoji: "👑", name: "Coroa" },
+    { id: "hat_party", tab: "clothes", slot: "hat", emoji: "🥳", name: "Chapéu festa" },
+    { id: "hat_wizard", tab: "clothes", slot: "hat", emoji: "🧙", name: "Chapéu mago" },
+    { id: "hat_cap", tab: "clothes", slot: "hat", emoji: "🧢", name: "Boné" },
+    { id: "hat_flower", tab: "clothes", slot: "hat", emoji: "🌸", name: "Florzinha" },
+    { id: "neck_bow", tab: "clothes", slot: "neck", emoji: "🎀", name: "Laço" },
+    { id: "neck_tie", tab: "clothes", slot: "neck", emoji: "👔", name: "Gravata" },
+    { id: "neck_scarf", tab: "clothes", slot: "neck", emoji: "🧣", name: "Cachecol" },
+    { id: "neck_medal", tab: "clothes", slot: "neck", emoji: "🏅", name: "Medalhinha" },
+    { id: "body_cape", tab: "clothes", slot: "body", emoji: "🦸", name: "Capa herói" },
+    { id: "body_dress", tab: "clothes", slot: "body", emoji: "👗", name: "Vestidinho" },
+    { id: "body_shirt", tab: "clothes", slot: "body", emoji: "👕", name: "Camisetinha" },
+    { id: "held_wand", tab: "clothes", slot: "held", emoji: "🪄", name: "Varinha" },
+    { id: "held_flower", tab: "clothes", slot: "held", emoji: "🌷", name: "Flor" },
+    { id: "held_mic", tab: "clothes", slot: "held", emoji: "🎤", name: "Microfone" },
+    { id: "face_sunglasses", tab: "costumes", slot: "face", emoji: "🕶️", name: "Óculos escuro" },
+    { id: "face_glasses", tab: "costumes", slot: "face", emoji: "👓", name: "Óculos" },
+    { id: "face_mustache", tab: "costumes", slot: "face", emoji: "🥸", name: "Disfarce" },
+    { id: "face_mask", tab: "costumes", slot: "face", emoji: "🎭", name: "Máscara" },
+    { id: "face_heart", tab: "costumes", slot: "face", emoji: "🥰", name: "Coraçõezinhos" },
+    { id: "hat_unicorn", tab: "costumes", slot: "hat", emoji: "🦄", name: "Tiara unicórnio" },
+    { id: "hat_halo", tab: "costumes", slot: "hat", emoji: "😇", name: "Aureolinha" },
+    { id: "hat_devil", tab: "costumes", slot: "hat", emoji: "😈", name: "Chifrinhos" },
+    { id: "body_ghost", tab: "costumes", slot: "body", emoji: "👻", name: "Fantasma" },
+    { id: "body_rainbow", tab: "costumes", slot: "body", emoji: "🌈", name: "Arco-íris" },
+  ];
+  const CLOSET_TABS = [
+    { id: "toys", label: "Brinquedos" },
+    { id: "clothes", label: "Roupas" },
+    { id: "costumes", label: "Fantasias" },
+  ];
+  const SAVE_KEY = "bichinho-collection-v1";
+  const emptyOutfit = () => ({ hat: null, face: null, neck: null, body: null, held: null });
+
 
   const TRAIT_LINES = {
     hunger: { icon: "🍎", text: "Eu sinto muita fome!" },
@@ -321,6 +380,7 @@
     hygiene: { icon: "🛁", text: "Eu me sujo muito!" },
     love: { icon: "💗", text: "Eu preciso de muito carinho!" },
     energy: { icon: "🌙", text: "Eu preciso dormir muito!" },
+    health: { icon: "💊", text: "Eu fico doentinho fácil!" },
   };
 
   const TRAIT_LINES_MACHINE = {
@@ -329,6 +389,7 @@
     hygiene: { icon: "🧽", text: "Eu fico bem enlameado!" },
     love: { icon: "💗", text: "Eu preciso de muito carinho!" },
     energy: { icon: "🔋", text: "Eu preciso recarregar muito!" },
+    health: { icon: "🛠️", text: "Eu quebro fácil! Preciso de conserto!" },
   };
 
   const NEEDS = {
@@ -337,6 +398,7 @@
     hygiene: { key: "4", icon: "🛁", text: (p) => `${p} está sujinho! Aperte 🛁 Banho` },
     love: { key: "5", icon: "💗", text: (p) => `${p} quer colo! Aperte 🤗 Carinho` },
     energy: { key: "6", icon: "🌙", text: (p) => `${p} está com soninho… Aperte 🌙 Dormir` },
+    health: { key: "H", icon: "💊", text: (p) => `${p} está doente! Aperte 💊 Saúde` },
   };
 
   const NEEDS_MACHINE = {
@@ -345,10 +407,35 @@
     hygiene: { key: "4", icon: "🧽", text: (p) => `${p} está sujo de lama! Aperte 🛁 Banho` },
     love: { key: "5", icon: "💗", text: (p) => `${p} quer colo! Aperte 🤗 Carinho` },
     energy: { key: "6", icon: "🔋", text: (p) => `${p} precisa recarregar… Aperte 🌙 Dormir` },
+    health: { key: "H", icon: "🛠️", text: (p) => `${p} quebrou! Aperte 💊 Saúde` },
   };
 
   function isMachine() {
     return state.species?.diet === "machine";
+  }
+  function toyEmoji(sp = state.species) {
+    if (state.activeToyId) {
+      const it = CLOSET_ITEMS.find((i) => i.id === state.activeToyId && i.tab === "toys");
+      if (it?.emoji) return it.emoji;
+    }
+    if (!sp) return "🎾";
+    if (sp.toy) return sp.toy;
+    const map = {
+      kitty: "🧶", floide: "🧶", lilica: "🥕", bunny: "🥕", tini: "🎾", puppy: "🎾",
+      dino: "🦴", bat: "🫐", seal: "🐟", monkey: "🍌", bee: "🌸", butterfly: "🌸", nini: "🌺",
+      lion: "🦴", elephant: "🍉", axolotl: "🫧", mole: "🍄", duck: "🌽", pig: "🍎",
+      unicorn: "⭐", racer: "🏁", botcar: "⚡", rocket: "🚀", heli: "🪢", train: "🚂",
+      tractor: "🌾", boat: "⚓", plane: "☁️", slime: "🍮",
+    };
+    return map[sp.id] || sp.food || "🎾";
+  }
+  function syncToyUI() {
+    const emoji = toyEmoji();
+    if (el.btnPlayIcon) el.btnPlayIcon.textContent = emoji;
+    if (el.toy) el.toy.textContent = emoji;
+    if (el.wish && !el.wish.hidden && el.wishIcon && state.playing) {
+      el.wishIcon.textContent = emoji;
+    }
   }
   function needsMap() {
     return isMachine() ? NEEDS_MACHINE : NEEDS;
@@ -362,8 +449,14 @@
     app: $("app"), fx: $("fx"), avatar: $("avatar"), petName: $("petName"), petStage: $("petStage"),
     traitBanner: $("traitBanner"),
     clockIcon: $("clockIcon"), clockTime: $("clockTime"),
-    actor: $("actor"), actorMove: $("actorMove"), actorImg: $("actorImg"), actorFx: $("actorFx"), actorGlow: $("actorGlow"),
+    actor: $("actor"), actorMove: $("actorMove"), actorImg: $("actorImg"), eggPeek: $("eggPeek"), actorFx: $("actorFx"), actorGlow: $("actorGlow"),
     bubble: $("bubble"), wish: $("wish"), wishIcon: $("wishIcon"), guide: $("guide"),
+    toy: $("toy"), sideCare: $("sideCare"), btnHeal: $("btnHeal"), btnPlay: $("btnPlay"), btnPlayIcon: $("btnPlayIcon"),
+    btnCloset: $("btnCloset"), btnCollection: $("btnCollection"),
+    closetPanel: $("closetPanel"), closetGrid: $("closetGrid"), closetTabs: $("closetTabs"), closetClose: $("closetClose"),
+    collectionPanel: $("collectionPanel"), collectionGrid: $("collectionGrid"), collectionClose: $("collectionClose"),
+    wearHat: $("wearHat"), wearFace: $("wearFace"), wearNeck: $("wearNeck"), wearBody: $("wearBody"), wearHeld: $("wearHeld"),
+    stage: $("stage"),
     thermoLabel: $("thermoLabel"), thermoKnob: $("thermoKnob"), hatchFill: $("hatchFill"), thermoHint: $("thermoHint"),
     btn1Icon: $("btn1Icon"), btn1Text: $("btn1Text"),
     growthFill: $("growthFill"), growthSteps: $("growthSteps"), flash: $("flash"), projectiles: $("projectiles"),
@@ -374,18 +467,33 @@
   const state = {
     phase: "egg", stage: 0, species: null, name: "",
     temp: 22, rubbing: false, idealMs: 0, eggCrack: 0,
-    needs: { hunger: 80, thirst: 80, hygiene: 85, love: 75, energy: 90 },
-    over: { hunger: 0, thirst: 0, hygiene: 0, love: 0 },
+    needs: { hunger: 80, thirst: 80, hygiene: 85, love: 75, energy: 90, health: 100 },
+    over: { hunger: 0, thirst: 0, hygiene: 0, love: 0, health: 0 },
     mood: "neutral", moodLock: 0, sleeping: false,
     pose: null, busy: false, nextSkit: Infinity,
     growthIntervalMs: DEMO.growthIntervalMs, lackMs: 0,
-    boosts: { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 },
+    boosts: { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1, health: 1 },
     strongTraits: [],
     hatchBag: [],
     variant: null,
     audience: null,
+    forceSpecies: null,
+    chosenEgg: false,
+    playing: false,
+    toy: { x: 58, y: 74 },
+    actorOff: { x: 0, y: 0 },
+    combo: 0,
+    comboTimer: 0,
+    tapBurst: 0,
+    lastTapAt: 0,
+    idleAnimAt: 0,
+    petId: null,
+    hatchAt: null,
+    outfit: emptyOutfit(),
+    activeToyId: null,
+    closetTab: "toys",
     dayStart: performance.now(), lastGrowth: performance.now(), last: performance.now(),
-    fxTimer: 0, preview: null,
+    fxTimer: 0, preview: null, saveTimer: 0,
   };
 
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -526,26 +634,278 @@
   }
   function wantsSomething() {
     const n = state.needs;
-    return n.hunger < 40 || n.thirst < 40 || n.love < 40 || n.hygiene < 30 || n.energy < 30;
+    return n.hunger < 40 || n.thirst < 40 || n.love < 40 || n.hygiene < 30 || n.energy < 30 || n.health < 40;
   }
   function expressionPose() {
     if (state.busy || state.sleeping || !state.species) return null;
     const n = state.needs;
     const has = (p) => state.species.poses.includes(p);
-    // Nervoso: cara brava
+    if ((state.mood === "sick" || n.health < 35) && has("sad")) return "sad";
     if (state.mood === "mad" && has("mad")) return "mad";
-    // Prioriza a necessidade mais baixa com pose específica
-    const order = ["hygiene", "energy", "love", "hunger", "thirst"];
+    const order = ["health", "hygiene", "energy", "love", "hunger", "thirst"];
     const worst = order.slice().sort((a, b) => n[a] - n[b])[0];
     if (n[worst] < 40) {
-      if (worst === "hygiene" && has("scratch")) return "scratch"; // se coçando, quer banho
-      if (worst === "energy" && has("sleepy")) return "sleepy"; // olhos pesados
-      if (worst === "love" && has("sad")) return "sad"; // triste / chorando
+      if (worst === "health" && has("sad")) return "sad";
+      if (worst === "hygiene" && has("scratch")) return "scratch";
+      if (worst === "energy" && has("sleepy")) return "sleepy";
+      if (worst === "love" && has("sad")) return "sad";
       if ((worst === "hunger" || worst === "thirst") && has("plead")) return "plead";
     }
     if (state.mood === "sad" && has("sad")) return "sad";
+    if (state.playing && has("rear")) return null;
     if (wantsSomething() && has("plead")) return "plead";
     return null;
+  }
+  function enablePetUI() {
+    Object.values(buttons).forEach((b) => (b.disabled = false));
+    if (el.sideCare) {
+      el.sideCare.hidden = false;
+      el.sideCare.removeAttribute("hidden");
+      el.sideCare.style.display = "";
+    }
+    if (el.btnHeal) el.btnHeal.disabled = false;
+    if (el.btnPlay) el.btnPlay.disabled = false;
+    if (el.btnCloset) el.btnCloset.disabled = false;
+    if (el.btnCollection) el.btnCollection.disabled = false;
+    syncToyUI();
+  }
+
+  function loadCollection() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+      if (!raw || !Array.isArray(raw.pets)) return { version: 1, activePetId: null, pets: [] };
+      return raw;
+    } catch (_) {
+      return { version: 1, activePetId: null, pets: [] };
+    }
+  }
+  function writeCollection(col) {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(col)); } catch (_) {}
+  }
+  function snapshotPet() {
+    if (state.phase !== "pet" || !state.species || state.preview) return null;
+    return {
+      id: state.petId || (state.petId = crypto.randomUUID?.() || `pet-${Date.now()}`),
+      speciesId: state.species.id,
+      variant: state.variant,
+      name: state.name,
+      stage: state.stage,
+      needs: { ...state.needs },
+      sleeping: state.sleeping,
+      mood: state.mood,
+      boosts: { ...(state.boosts || {}) },
+      strongTraits: [...(state.strongTraits || [])],
+      outfit: { ...state.outfit },
+      activeToyId: state.activeToyId,
+      hatchAt: state.hatchAt || Date.now(),
+      updatedAt: Date.now(),
+      growthIntervalMs: state.growthIntervalMs,
+      lackMs: state.lackMs,
+    };
+  }
+  function saveActivePet() {
+    const snap = snapshotPet();
+    if (!snap) return;
+    const col = loadCollection();
+    const i = col.pets.findIndex((p) => p.id === snap.id);
+    if (i >= 0) col.pets[i] = snap; else col.pets.push(snap);
+    col.activePetId = snap.id;
+    col.version = 1;
+    writeCollection(col);
+  }
+  function applyPetSnapshot(snap) {
+    const species = SPECIES.find((s) => s.id === snap.speciesId) || SPECIES.find((s) => s.ready) || SPECIES[0];
+    if (!state.audience) state.audience = "both";
+    applyVariant(species, snap.variant || pickVariant(species));
+    Object.assign(state, {
+      phase: "pet",
+      petId: snap.id,
+      species,
+      name: snap.name || pick(species.names),
+      stage: clamp(snap.stage || 1, 1, 4),
+      needs: { hunger: 80, thirst: 80, hygiene: 85, love: 75, energy: 90, health: 100, ...(snap.needs || {}) },
+      sleeping: !!snap.sleeping,
+      boosts: snap.boosts || { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1, health: 1 },
+      strongTraits: snap.strongTraits || [],
+      outfit: { ...emptyOutfit(), ...(snap.outfit || {}) },
+      activeToyId: snap.activeToyId || null,
+      hatchAt: snap.hatchAt || Date.now(),
+      growthIntervalMs: speciesGrowthMs(species),
+      lackMs: snap.lackMs || 0,
+      pose: null,
+      busy: false,
+      playing: false,
+      actorOff: { x: 0, y: 0 },
+      lastGrowth: performance.now(),
+      nextSkit: performance.now() + 8000,
+    });
+    el.app.dataset.phase = "pet";
+    el.app.classList.remove("playing");
+    if (el.toy) el.toy.hidden = true;
+    enablePetUI();
+    el.btn1Icon.textContent = "☀️";
+    el.btn1Text.textContent = "Acordar";
+    renderActor(); renderOutfit(); renderHeader(); renderNeeds(); renderGrowth();
+    setMood(snap.sleeping ? "sleep" : (snap.mood || "happy"), 1200);
+    say(`Oi de novo! Eu sou ${state.name}! 💖`, 2400);
+  }
+  function tryResumeSavedPet() {
+    if (state.preview) return false;
+    const q = new URLSearchParams(location.search);
+    if (q.get("hatch") != null || q.get("species") || q.get("egg") != null) return false;
+    const col = loadCollection();
+    const snap = col.pets.find((p) => p.id === col.activePetId) || col.pets[col.pets.length - 1];
+    if (!snap) return false;
+    applyPetSnapshot(snap);
+    return true;
+  }
+  function archiveAndNewEgg() {
+    saveActivePet();
+    const col = loadCollection();
+    col.activePetId = null;
+    writeCollection(col);
+    location.href = "index.html?new=1";
+  }
+
+  function renderOutfit() {
+    const map = { hat: el.wearHat, face: el.wearFace, neck: el.wearNeck, body: el.wearBody, held: el.wearHeld };
+    for (const [slot, node] of Object.entries(map)) {
+      if (!node) continue;
+      const id = state.outfit?.[slot];
+      const item = id && CLOSET_ITEMS.find((i) => i.id === id);
+      node.hidden = !item;
+      if (item) node.textContent = item.emoji;
+    }
+  }
+
+  function openCloset(tab) {
+    if (state.phase !== "pet") return;
+    state.closetTab = tab || state.closetTab || "toys";
+    if (el.closetPanel) el.closetPanel.hidden = false;
+    if (el.collectionPanel) el.collectionPanel.hidden = true;
+    renderCloset();
+  }
+  function closeCloset() {
+    if (el.closetPanel) el.closetPanel.hidden = true;
+  }
+  function renderCloset() {
+    if (!el.closetTabs || !el.closetGrid) return;
+    el.closetTabs.innerHTML = "";
+    CLOSET_TABS.forEach((t) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "closet-tab" + (state.closetTab === t.id ? " on" : "");
+      b.textContent = t.label;
+      b.addEventListener("click", () => { state.closetTab = t.id; renderCloset(); });
+      el.closetTabs.appendChild(b);
+    });
+    el.closetGrid.innerHTML = "";
+    CLOSET_ITEMS.filter((i) => i.tab === state.closetTab).forEach((item) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "closet-item";
+      const equipped = item.tab === "toys"
+        ? state.activeToyId === item.id
+        : state.outfit[item.slot] === item.id;
+      if (equipped) b.classList.add("on");
+      b.innerHTML = `<span class="ce">${item.emoji}</span><span class="cn">${item.name}</span>`;
+      b.addEventListener("click", () => equipItem(item));
+      el.closetGrid.appendChild(b);
+    });
+  }
+  function equipItem(item) {
+    if (item.tab === "toys") {
+      // Seleciona o brinquedo (clicar de novo guarda)
+      state.activeToyId = state.activeToyId === item.id ? null : item.id;
+      syncToyUI();
+      say(state.activeToyId ? `Agora vamos de ${item.emoji} ${item.name}!` : "Brinquedo guardado — volto ao padrão!", 1800);
+    } else {
+      const cur = state.outfit[item.slot];
+      state.outfit[item.slot] = cur === item.id ? null : item.id;
+      renderOutfit();
+      rain([item.emoji, "✨", "💖"], 6);
+      say(state.outfit[item.slot] ? `Ficou lindo de ${item.name}!` : "Tirei!", 1800);
+      setMood("happy", 1200);
+    }
+    saveActivePet();
+    renderCloset();
+  }
+
+  function openCollection() {
+    if (el.collectionPanel) el.collectionPanel.hidden = false;
+    if (el.closetPanel) el.closetPanel.hidden = true;
+    renderCollection();
+  }
+  function closeCollection() {
+    if (el.collectionPanel) el.collectionPanel.hidden = true;
+  }
+  function renderCollection() {
+    if (!el.collectionGrid) return;
+    saveActivePet();
+    const col = loadCollection();
+    el.collectionGrid.innerHTML = "";
+    if (!col.pets.length) {
+      el.collectionGrid.innerHTML = `<p class="collection-empty">Ainda não tem PIXELs salvos. Nasça um ovinho!</p>`;
+      return;
+    }
+    col.pets.slice().reverse().forEach((p) => {
+      const sp = SPECIES.find((s) => s.id === p.speciesId);
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "collection-card" + (p.id === col.activePetId ? " active" : "");
+      const prevV = state.variant;
+      if (sp && p.variant) state.variant = p.variant;
+      const thumb = sp ? baseArt(sp, clamp(p.stage || 1, 1, 4)) : "";
+      state.variant = prevV;
+      const face = p.outfit?.face && CLOSET_ITEMS.find((i) => i.id === p.outfit.face)?.emoji;
+      const hat = p.outfit?.hat && CLOSET_ITEMS.find((i) => i.id === p.outfit.hat)?.emoji;
+      card.innerHTML = `<span class="thumb" style="background-image:url(${thumb})"></span><span class="meta"><b>${p.name || sp?.name || "PIXEL"}</b><i>${sp?.name || ""} · ${STAGE_LABELS[p.stage] || ""}</i></span><span class="bits">${hat || ""}${face || ""}</span>`;
+      card.addEventListener("click", () => {
+        saveActivePet();
+        const c = loadCollection();
+        c.activePetId = p.id;
+        writeCollection(c);
+        applyPetSnapshot(p);
+        closeCollection();
+      });
+      el.collectionGrid.appendChild(card);
+    });
+  }
+
+  function showCombo(n) {
+    let badge = document.getElementById("comboBadge");
+    if (!badge) {
+      badge = document.createElement("div");
+      badge.id = "comboBadge";
+      badge.className = "combo-badge";
+      el.stage.appendChild(badge);
+    }
+    if (n < 2) { badge.hidden = true; return; }
+    badge.hidden = false;
+    badge.textContent = `×${n} COMBO!`;
+    badge.classList.remove("pop");
+    void badge.offsetWidth;
+    badge.classList.add("pop");
+  }
+  function stageShake() {
+    el.stage.classList.remove("shake");
+    void el.stage.offsetWidth;
+    el.stage.classList.add("shake");
+    setTimeout(() => el.stage.classList.remove("shake"), 420);
+    try { navigator.vibrate?.(18); } catch (_) {}
+  }
+  function sparkleAt(clientX, clientY, symbols = ["✨", "⭐", "💫"]) {
+    const r = el.stage.getBoundingClientRect();
+    const x = ((clientX - r.left) / r.width) * 100;
+    const y = ((clientY - r.top) / r.height) * 100;
+    fx("float", pick(symbols), { x, y, dx: (Math.random() - 0.5) * 80 });
+  }
+  function artFile(url) {
+    return String(url || "").split("/").pop().split("?")[0];
+  }
+  function setActorSrc(src) {
+    if (!src) return;
+    if (artFile(el.actorImg.src) !== artFile(src)) el.actorImg.src = src;
   }
   function currentArt() {
     const sp = state.species;
@@ -716,21 +1076,82 @@
   }
 
   // ---------- Rendering ----------
+  function isChosenEgg() {
+    return !!(state.chosenEgg && (state.phase === "egg" || state.phase === "hatching"));
+  }
+  function eggArtSrc(crack = 0) {
+    if (crack <= 0) return `${ART}egg.webp`;
+    if (crack === 1) return `${ART}egg_crack1.webp`;
+    if (crack === 2) return `${ART}egg_crack2.webp`;
+    if (crack === 3) return `${ART}egg_crack3.webp`;
+    return `${ART}egg_broken.webp`;
+  }
+  function eggPeekArt(sp) {
+    if (!sp) return null;
+    if (sp.id === "axolotl") return `${ART}egg_gotinha.webp`;
+    return null;
+  }
+  function syncEggPeekLayers() {
+    const chosen = isChosenEgg();
+    el.actor.classList.toggle("chosen-egg", chosen);
+    if (el.eggPeek) {
+      el.eggPeek.hidden = true;
+      el.eggPeek.removeAttribute("src");
+    }
+
+    if (state.phase !== "egg" && state.phase !== "hatching") return;
+
+    const t = state.temp;
+    const ideal = t >= DEMO.idealMin && t <= DEMO.idealMax;
+    const pct = clamp(state.idealMs / (DEMO.hatchSeconds * 1000), 0, 1);
+    const hatching = state.phase === "hatching";
+    const crack = state.eggCrack || 0;
+    const peekArt = chosen ? eggPeekArt(state.forceSpecies) : null;
+    // Revela aos poucos quando esquenta (não só no ideal exato)
+    const warmEnough = t >= DEMO.idealMin - 5 && t <= DEMO.idealMax + 6;
+    const peeking = !!(peekArt && (hatching || warmEnough) && crack === 0);
+    const pushing = !!(chosen && (hatching || (ideal && pct >= 0.35)));
+
+    el.actor.classList.toggle("egg-peeking", peeking);
+    el.actor.classList.toggle("egg-pushing", pushing);
+    el.actorImg.style.opacity = "1";
+
+    const nextSrc = peeking ? peekArt : eggArtSrc(crack);
+    setActorSrc(nextSrc);
+    // Véu alto no começo → baixo quando mantém o calor / fica nervoso
+    const heatReveal = clamp((t - (DEMO.idealMin - 5)) / 22, 0, 1);
+    const veil = peeking
+      ? clamp((pushing ? 0.12 : 0.58 - heatReveal * 0.3 - pct * 0.18), 0.1, 0.65)
+      : 0;
+    el.actor.style.setProperty("--egg-veil", veil.toFixed(3));
+  }
   function renderActor() {
     if (state.phase === "egg" || state.phase === "hatching") {
-      const crack = state.eggCrack || 0;
-      el.actorImg.src = crack <= 0 ? `${ART}egg.webp`
-        : crack === 1 ? `${ART}egg_crack1.webp`
-        : crack === 2 ? `${ART}egg_crack2.webp`
-        : crack === 3 ? `${ART}egg_crack3.webp`
-        : `${ART}egg_broken.webp`;
       el.actorImg.style.scale = "1";
+      syncEggPeekLayers();
       return;
     }
-    const src = currentArt();
-    if (!el.actorImg.src.endsWith(src)) el.actorImg.src = src;
+    if (el.eggPeek) {
+      el.eggPeek.hidden = true;
+      el.eggPeek.removeAttribute("src");
+    }
+    el.actor.classList.remove("chosen-egg", "egg-peeking", "egg-pushing");
+    el.actorImg.style.opacity = "";
+    el.actorMove.style.filter = "";
+    el.actor.style.removeProperty("--egg-veil");
+    setActorSrc(currentArt());
     el.actorImg.style.scale = String(STAGE_SCALE[state.stage]);
     el.actorGlow.style.background = `radial-gradient(circle at 50% 80%, ${state.species.glow}, transparent 60%)`;
+    el.actor.classList.toggle("sick", state.needs.health < 40 || state.mood === "sick");
+    const ox = state.actorOff?.x || 0, oy = state.actorOff?.y || 0;
+    el.actorMove.style.transform = `translate(${ox}px, ${oy}px)`;
+    renderOutfit();
+  }
+  function renderChosenEggHeader(sp) {
+    if (!sp) return;
+    el.avatar.style.backgroundImage = `url(${baseArt(sp, 1)})`;
+    el.petName.textContent = pick(sp.names);
+    el.petStage.textContent = `${sp.name} · ovo escolhido`;
   }
   function renderHeader() {
     if (!state.species) return;
@@ -759,19 +1180,37 @@
   function renderEgg() {
     const t = state.temp;
     el.thermoKnob.style.left = `${t}%`;
-    const heat = clamp((t - 30) / 60, 0, 1), cold = clamp((40 - t) / 30, 0, 1);
-    el.actorImg.style.filter =
-      `drop-shadow(0 18px 18px rgba(40,10,50,.28)) drop-shadow(0 0 ${10 + heat * 40}px rgba(255,${Math.round(200 - heat * 150)},${Math.round(120 - heat * 100)},${0.2 + heat * 0.7})) ` +
-      `saturate(${1 + heat * 0.6 - cold * 0.3}) hue-rotate(${-heat * 25 + cold * 25}deg) brightness(${1 + heat * 0.08})`;
+    const heat = clamp((t - 30) / 60, 0, 1);
+    const chosen = isChosenEgg();
+    const ideal = t >= DEMO.idealMin && t <= DEMO.idealMax;
+    const peeking = chosen && (ideal || state.phase === "hatching") && (state.eggCrack || 0) === 0;
+    // Sem drop-shadow no ovo animado (causa “sombra”/rastro). Só matiz leve via glow do actor.
+    el.actorMove.style.filter = "";
+    el.actorImg.style.filter = "";
+    if (el.actorGlow) {
+      const warm = Math.round(200 - heat * 80);
+      const cool = Math.round(140 - heat * 60);
+      el.actorGlow.style.background = peeking
+        ? `radial-gradient(circle at 50% 55%, rgba(255,230,200,${0.35 + heat * 0.25}), transparent 62%)`
+        : `radial-gradient(circle at 50% 60%, rgba(255,${warm},${cool},${0.25 + heat * 0.35}), transparent 65%)`;
+      el.actorGlow.style.opacity = String(0.45 + heat * 0.25);
+    }
     let label, hint;
+    const pct = clamp(state.idealMs / (DEMO.hatchSeconds * 1000), 0, 1);
     if (t < DEMO.idealMin - 12) { label = "Frio 🥶"; hint = "Brrr… o ovinho está gelado"; }
-    else if (t < DEMO.idealMin) { label = "Morninho"; hint = "Quase lá!"; }
-    else if (t <= DEMO.idealMax) { label = "Perfeito ✨"; hint = "Isso! Tem alguém se mexendo aí dentro…"; }
+    else if (t < DEMO.idealMin) { label = "Morninho"; hint = chosen ? "Quase dá pra ver quem está aí…" : "Quase lá!"; }
+    else if (t <= DEMO.idealMax) {
+      label = "Perfeito ✨";
+      if (chosen && pct >= 0.55) hint = "Nervoso! Está empurrando pra nascer! 💢";
+      else if (chosen) hint = "Aparecendo aos poucos… continue aquecendo!";
+      else hint = "Isso! Tem alguém se mexendo aí dentro…";
+    }
     else if (t <= DEMO.idealMax + 12) { label = "Quente!"; hint = "Cuidado, está esquentando demais"; }
     else { label = "Muito quente 🔥"; hint = "Ai! Deixe esfriar um pouquinho"; }
     el.thermoLabel.textContent = label;
     el.thermoHint.textContent = hint;
-    el.hatchFill.style.width = `${clamp((state.idealMs / (DEMO.hatchSeconds * 1000)) * 100, 0, 100)}%`;
+    el.hatchFill.style.width = `${pct * 100}%`;
+    syncEggPeekLayers();
   }
 
   // ---------- Guide: always tell the child what to do next ----------
@@ -784,6 +1223,8 @@
     }
     el.guide.classList.toggle("urgent", urgent);
     Object.entries(buttons).forEach(([k, b]) => b.classList.toggle("wanted", k === wantedKey));
+    el.btnHeal?.classList.toggle("wanted", wantedKey === "H");
+    el.btnPlay?.classList.toggle("wanted", wantedKey === "P");
     el.wish.hidden = !wishIcon;
     if (wishIcon && el.wishIcon.textContent !== wishIcon) el.wishIcon.textContent = wishIcon;
   }
@@ -793,13 +1234,30 @@
       if (!state.audience) return setGuide("Primeiro escolhe: menina, menino ou tanto faz! ✨");
       const t = state.temp;
       if (t > DEMO.idealMax + 4) return setGuide("Muito quente! Pare de esfregar ✋", null, null, true);
-      if (t >= DEMO.idealMin) {
+      if (t >= DEMO.idealMin && t <= DEMO.idealMax) {
         const pct = clamp(state.idealMs / (DEMO.hatchSeconds * 1000), 0, 1);
-        if (pct > 0.65) return setGuide("Está rachando! Continue com cuidado… 🥚", "1", null, true);
-        if (pct > 0.3) return setGuide("Algo se mexe lá dentro… ✨", "1");
-        return setGuide("Perfeito! Continue devagarinho 💛", "1");
+        if (pct > 0.65) {
+          return setGuide(
+            isChosenEgg() ? "Está nervoso! Empurrando a casca pra nascer! 💢" : "Está rachando! Continue com cuidado… 🥚",
+            "1", null, true
+          );
+        }
+        if (pct > 0.3) {
+          return setGuide(
+            isChosenEgg() ? "Olha… está ficando inquieto lá dentro! ✨" : "Algo se mexe lá dentro… ✨",
+            "1"
+          );
+        }
+        return setGuide(
+          isChosenEgg() ? "Perfeito! O PIXEL aparece aos pouquinhos… 💛" : "Perfeito! Continue devagarinho 💛",
+          "1"
+        );
       }
-      return setGuide("Esfregue o ovo com o dedo para aquecer! 👆", "1");
+      if (t >= DEMO.idealMin) return setGuide("Perfeito! Continue devagarinho 💛", "1");
+      return setGuide(
+        isChosenEgg() ? "Aqueça o ovo pra revelar o PIXEL! 👆" : "Esfregue o ovo com o dedo para aquecer! 👆",
+        "1"
+      );
     }
     if (state.phase === "hatching") return setGuide("O ovo está quebrando… surpresa! ✨");
     const p = state.name;
@@ -809,11 +1267,18 @@
       return setGuide(day && state.needs.energy > 90 ? `${p} já descansou! Aperte ☀️ Acordar` : `Shhh… ${p} está dormindo 💤`, day && state.needs.energy > 90 ? "1" : null);
     }
     if (state.mood === "mad") return setGuide(`${p} está nervoso! Olha a carinha dele — cuida agora! 💢`, null, "😤", true);
+    if (state.mood === "sick" || state.needs.health < 40) {
+      return setGuide(`${p} está doente… Aperte 💊 Saúde na lateral!`, "H", "💊", true);
+    }
+    if (state.playing) {
+      return setGuide(`Arraste o ${toyEmoji()} — ${p} vai atrás! ✨`, "P", toyEmoji());
+    }
     if (state.mood === "sad") {
       const n = state.needs;
-      const worst = ["hunger", "thirst", "hygiene", "love", "energy"].sort((a, b) => n[a] - n[b])[0];
+      const worst = ["hunger", "thirst", "hygiene", "love", "energy", "health"].sort((a, b) => n[a] - n[b])[0];
       const need = needsMap()[worst];
       const icon = worst === "hunger" ? state.species.food : need.icon;
+      if (worst === "health") return setGuide(`${p} está doente… Aperte 💊 Saúde!`, "H", "💊", true);
       if (worst === "hygiene") return setGuide(`${p} está se coçando… Quer banho! 🛁`, "4", "🛁", true);
       if (worst === "love") return setGuide(`${p} está chorando… Quer carinho! 💗`, "5", "💗", true);
       if (worst === "energy") return setGuide(`${p} está com os olhinhos pesados… Aperte 🌙 Dormir`, "6", "🌙", true);
@@ -845,7 +1310,10 @@
       return setGuide(text, need.key, icon, n[worst] < 25);
     }
     if (night) return setGuide(`Está de noite… hora de nanar? 🌙`, "6", "🌙");
-    setGuide(`${p} está feliz! Faça carinho passando o dedo 💕`);
+    if (n.energy > 40 && n.love < 85 && Math.random() < 0.002) {
+      return setGuide(`Que tal brincar? Aperte Brincar e arraste o ${toyEmoji()}!`, "P", toyEmoji());
+    }
+    setGuide(`${p} está feliz! Faça carinho, ou aperte Brincar ${toyEmoji()}`, "P", "💕");
   }
 
   // ---------- Clumsy baby skits ----------
@@ -1101,6 +1569,7 @@
 
   async function hatch(species) {
     if (state.phase === "hatching") return;
+    const wasChosenEgg = !!state.chosenEgg;
     state.phase = "hatching";
     state.rubbing = false;
     el.actor.classList.remove("rubbing");
@@ -1108,10 +1577,12 @@
     el.app.dataset.phase = "hatching";
     updateGuide();
 
-    // Escolhe o bichinho em segredo — o jogador ainda não vê.
-    species = species || pickHatchSpecies();
+    // Ovo escolhido já tinha o PIXEL; surpresa só revela no final.
+    species = species || state.forceSpecies || pickHatchSpecies();
+    if (wasChosenEgg) state.forceSpecies = species;
     applyVariant(species, pickVariant(species));
     preload(species);
+    syncEggPeekLayers();
     const rolled = rollStrongTraits(species);
 
     const steps = [
@@ -1132,28 +1603,41 @@
     burst(140, 0.5);
     await wait(500);
 
+    const knewSpecies = wasChosenEgg;
     Object.assign(state, {
       phase: "pet", stage: 1, species, name: pick((state.variant && species.variants?.[state.variant]?.names) || species.names),
       lastGrowth: performance.now(), eggCrack: 0, pose: null, lackMs: 0,
       boosts: rolled.boosts,
       strongTraits: rolled.strongTraits,
-      growthIntervalMs: Math.round((species.profile?.growthMs || DEMO.growthIntervalMs) * (0.92 + Math.random() * 0.16)),
+      growthIntervalMs: Math.round(speciesGrowthMs(species) * (0.92 + Math.random() * 0.16)),
+      petId: crypto.randomUUID?.() || `pet-${Date.now()}`,
+      hatchAt: Date.now(),
+      outfit: emptyOutfit(),
+      activeToyId: null,
+      playing: false,
+      actorOff: { x: 0, y: 0 },
+      forceSpecies: null,
+      chosenEgg: false,
     });
     el.app.dataset.phase = "pet";
-    el.actor.classList.remove("hatch-burst", "crack-shake");
+    el.actor.classList.remove("hatch-burst", "crack-shake", "chosen-egg", "egg-peeking", "egg-pushing", "hatching");
+    if (el.eggPeek) el.eggPeek.hidden = true;
     el.actorImg.style.filter = "";
+    el.actorImg.style.opacity = "";
+    el.actorMove.style.filter = "";
     renderActor(); renderHeader(); renderGrowth();
-    Object.values(buttons).forEach((b) => (b.disabled = false));
+    enablePetUI();
     el.btn1Icon.textContent = "☀️";
     el.btn1Text.textContent = "Acordar";
     setMood("happy", 2000);
     rain(["✨", "💖", "⭐"], 10);
-    say(`Surpresa! Eu sou ${state.name}! 💖`, 2600);
+    say(knewSpecies ? `Sou eu, ${state.name}! 💖` : `Surpresa! Eu sou ${state.name}! 💖`, 2600);
     setTimeout(() => {
       const line = rolled.phrases.map((p) => p.text).join(" ");
       say(line, 4200);
     }, 2700);
     state.nextSkit = performance.now() + 3200;
+    saveActivePet();
   }
 
   function grow() {
@@ -1180,8 +1664,115 @@
       thirst: BASE_RATES.thirst * stage * (pr.thirst || 1) * (b.thirst || 1),
       hygiene: BASE_RATES.hygiene * stage * (pr.hygiene || 1) * (b.hygiene || 1),
       love: BASE_RATES.love * stage * (pr.love || 1) * (b.love || 1),
-      energy: state.sleeping ? -5 : BASE_RATES.energy * stage * (pr.energy || 1) * (b.energy || 1),
+      energy: state.sleeping ? (-5 / PACE) : BASE_RATES.energy * stage * (pr.energy || 1) * (b.energy || 1),
+      health: 0,
     };
+  }
+
+  function speciesGrowthMs(sp = state.species) {
+    // profile.growthMs é o valor “original”; PACE deixa 3× mais lento
+    return (sp?.profile?.growthMs || 45_000) * PACE;
+  }
+
+  function isSick() {
+    return state.mood === "sick" || state.needs.health < 35;
+  }
+
+  function refuseBecauseSick(kind) {
+    if (!isSick()) return false;
+    setMood("sick", 2200);
+    rain(["🤒", "💢", "💧"], 4);
+    if (kind === "play") {
+      if (state.playing) setPlaying(false);
+      say(isMachine() ? "Quebrado… não dá pra brincar agora 🛠️" : "Tô doente… não quero brincar 🤒", 2400);
+    } else if (kind === "feed") {
+      say(isMachine() ? "Motor enjoado… sem peças agora 😣" : "Buá… barriga dói, não quero comer 🤒", 2400);
+    } else {
+      say(isMachine() ? "Preciso de conserto primeiro! 🛠️" : "Me cura primeiro… 💊", 2200);
+    }
+    renderActor();
+    return true;
+  }
+
+  function setPlaying(on) {
+    if (state.phase !== "pet" || state.sleeping) return;
+    if (on && isSick()) {
+      refuseBecauseSick("play");
+      return;
+    }
+    state.playing = !!on;
+    el.app.classList.toggle("playing", state.playing);
+    if (el.toy) {
+      el.toy.hidden = !state.playing;
+      if (state.playing) placeToyNearPet(14);
+    }
+    syncToyUI();
+    if (state.playing) {
+      say(`Pega o brinquedo! ${toyEmoji()}`, 2200);
+      setMood("happy", 1800);
+    } else {
+      state.actorOff = { x: 0, y: 0 };
+      renderActor();
+      say("Brincadeira acabou!", 1600);
+    }
+  }
+
+  /** Brinquedo no chão, perto das patinhas do PIXEL (não longe no cenário). */
+  function placeToyNearPet(spread = 16) {
+    const rect = el.stage?.getBoundingClientRect();
+    let x = 56, y = 74;
+    if (rect && rect.width > 0) {
+      // Desloca levemente com o PIXEL se ele já correu
+      x += ((state.actorOff?.x || 0) / rect.width) * 100;
+      y += ((state.actorOff?.y || 0) / rect.height) * 100;
+    }
+    placeToy(
+      x + (Math.random() - 0.5) * spread,
+      y + (Math.random() - 0.5) * (spread * 0.45)
+    );
+  }
+
+  function placeToy(px, py) {
+    // Zona de brincar: centro-baixo do stage (perto do PIXEL)
+    state.toy.x = clamp(px, 38, 72);
+    state.toy.y = clamp(py, 62, 84);
+    if (!el.toy) return;
+    el.toy.style.left = `${state.toy.x}%`;
+    el.toy.style.top = `${state.toy.y}%`;
+  }
+
+  function chaseToy(dt) {
+    if (!state.playing || !el.stage) return;
+    const rect = el.stage.getBoundingClientRect();
+    const tx = (state.toy.x / 100) * rect.width - rect.width / 2;
+    const ty = (state.toy.y / 100) * rect.height - rect.height * 0.42;
+    const cur = state.actorOff;
+    const speed = 180 * dt; // px/s
+    const dx = tx - cur.x, dy = ty - cur.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    if (dist < 42) {
+      state.combo = (state.comboTimer > 0 ? state.combo : 0) + 1;
+      state.comboTimer = 2.8;
+      const bonus = Math.min(6, state.combo);
+      state.needs.love = clamp(state.needs.love + 8 + bonus, 0, 100);
+      state.needs.hunger = clamp(state.needs.hunger - 4, 0, 100);
+      state.needs.thirst = clamp(state.needs.thirst - 5, 0, 100);
+      state.needs.energy = clamp(state.needs.energy - 6, 0, 100);
+      placeToyNearPet(20);
+      rain([toyEmoji(), "✨", "💗"], 5 + Math.min(4, state.combo));
+      showCombo(state.combo);
+      if (state.combo >= 3) stageShake();
+      if (Math.random() < 0.4) say(pick(["Peguei!", "De novo!", "Hihihi!", "Mais!", `Combo ×${state.combo}!`]), 1200);
+      setMood("happy", 900);
+      return;
+    }
+    const step = Math.min(speed, dist);
+    state.actorOff = { x: cur.x + (dx / dist) * step, y: cur.y + (dy / dist) * step };
+    el.actorMove.style.transform = `translate(${state.actorOff.x}px, ${state.actorOff.y}px)`;
+    // Correr cansa um pouquinho contínuo
+    state.needs.energy = clamp(state.needs.energy - 1.8 * dt, 0, 100);
+    state.needs.thirst = clamp(state.needs.thirst - 1.2 * dt, 0, 100);
+    state.needs.hunger = clamp(state.needs.hunger - 0.9 * dt, 0, 100);
   }
 
   async function care(kind) {
@@ -1201,6 +1792,7 @@
     const relieve = (key) => { state.over[key] = Math.max(0, state.over[key] - 1); };
 
     if (kind === "feed") {
+      if (refuseBecauseSick("feed")) return;
       if (tooMuch("hunger", 92, isMachine() ? "Já tenho peças demais! 🔧" : "Minha barriguinha tá cheia! 😣")) return;
       state.busy = true;
       await throwTo("2", state.species.food);
@@ -1240,6 +1832,7 @@
       say(pick(["Hihihi!", "Te amo! 💖", "Mais um abraço!", "Rrrrrr… 😊"]));
     } else if (kind === "sleep") {
       if (!state.sleeping) {
+        if (state.playing) setPlaying(false);
         state.sleeping = true;
         state.pose = null;
         state.busy = false;
@@ -1247,35 +1840,58 @@
         say("Boa noite… 🌙", 2200);
       }
       renderActor(); renderNeeds();
+      saveActivePet();
       return;
     } else if (kind === "wake") {
       if (!state.sleeping) { say("Já estou acordado!", 1400); return; }
       state.sleeping = false;
       rain(["☀️", "✨"], 4);
       say("Bom dia!! ☀️", 2000);
+    } else if (kind === "heal") {
+      if (n.health > 92) { say(isMachine() ? "Já estou novinho! 🛠️" : "Já estou saudável! 💚", 1600); return; }
+      state.busy = true;
+      rain(isMachine() ? ["🛠️", "🔩", "✨"] : ["💊", "💚", "✨"], 10);
+      playMove("wobble", 1200);
+      n.health = clamp(n.health + 38, 0, 100);
+      n.hygiene = clamp(n.hygiene + 6, 0, 100);
+      say(isMachine() ? "Consertado! Vruum! 🛠️" : "Já estou melhor! 💚", 2200);
+      await wait(1400);
+      state.busy = false;
+      el.actor.classList.remove("sick");
+    } else if (kind === "play") {
+      if (state.sleeping) { say("Shhh… zzz", 1400); return; }
+      if (refuseBecauseSick("play")) return;
+      if (n.energy < 12) { say("Estou cansadinho demais… 😴", 1800); return; }
+      setPlaying(!state.playing);
+      renderNeeds();
+      return;
     }
     setMood("happy", 1600);
     state.lackMs = Math.max(0, state.lackMs - 4000);
     renderActor();
     renderNeeds();
+    saveActivePet();
   }
 
   function evaluateMood(now) {
     if (now < state.moodLock || state.busy) return;
     if (state.sleeping) return setMood("sleep");
     const n = state.needs;
+    if (n.health < 28) return setMood("sick");
     if (Object.values(state.over).some((v) => v > 2)) return setMood("mad");
 
     const lows = ["hunger", "thirst", "hygiene", "love", "energy"].filter((k) => n[k] < 35);
     const crits = ["hunger", "thirst", "hygiene", "love", "energy"].filter((k) => n[k] < 18);
 
     if (crits.length >= 1 || lows.length >= 2 || state.lackMs > 12_000) {
-      return setMood("mad"); // nervoso
+      return setMood("mad");
     }
+    if (n.health < 45) return setMood("sad");
     if (lows.length >= 1 || n.hunger < 28 || n.thirst < 28 || n.love < 25 || n.energy < 22 || n.hygiene < 22) {
       return setMood("sad");
     }
-    if (n.hunger > 60 && n.thirst > 60 && n.love > 55 && n.hygiene > 50) return setMood("happy");
+    if (state.playing) return setMood("happy");
+    if (n.hunger > 60 && n.thirst > 60 && n.love > 55 && n.hygiene > 50 && n.health > 55) return setMood("happy");
     setMood("neutral");
   }
 
@@ -1317,19 +1933,48 @@
       if (!state.preview) {
         const rates = decayRates();
         for (const [k, r] of Object.entries(rates)) state.needs[k] = clamp(state.needs[k] - r * dt, 0, 100);
-        for (const k of Object.keys(state.over)) state.over[k] = Math.max(0, state.over[k] - 0.15 * dt);
+        for (const k of Object.keys(state.over)) state.over[k] = Math.max(0, state.over[k] - (0.15 / PACE) * dt);
+
+        // Saúde: cai com abandono, sobe com cuidados bons
+        const n = state.needs;
+        const neglect = ["hunger", "thirst", "hygiene", "energy"].filter((k) => n[k] < 30).length;
+        let hDelta = 0;
+        if (neglect >= 2) hDelta = (-4 / PACE) * dt;
+        else if (neglect >= 1) hDelta = (-1.5 / PACE) * dt;
+        else if (n.hunger > 50 && n.thirst > 50 && n.hygiene > 50 && n.love > 40) hDelta = (1.2 / PACE) * dt;
+        n.health = clamp(n.health + hDelta, 0, 100);
 
         const lacking = Object.values(state.needs).some((v) => v < 35);
         state.lackMs = lacking ? state.lackMs + dt * 1000 : Math.max(0, state.lackMs - dt * 2000);
+
+        if (state.playing) {
+          if (isSick()) {
+            setPlaying(false);
+            say(isMachine() ? "Quebrou no meio da brincadeira… 🛠️" : "Ai… doente demais pra brincar 🤒", 2200);
+          } else {
+          chaseToy(dt);
+          if (state.comboTimer > 0) {
+            state.comboTimer -= dt;
+            if (state.comboTimer <= 0) { state.combo = 0; showCombo(0); }
+          }
+          if (n.energy < 8) {
+            setPlaying(false);
+            say("Cansou… precisa descansar! 😴", 2000);
+          }
+          }
+        }
+
+        state.saveTimer = (state.saveTimer || 0) + dt;
+        if (state.saveTimer > 8) { state.saveTimer = 0; saveActivePet(); }
 
         if (state.stage < 4) {
           const frac = (now - state.lastGrowth) / state.growthIntervalMs;
           if (frac >= 1) {
             state.lastGrowth = now;
-            // Cada fase seguinte usa o perfil do animal ± um pouquinho de aleatório
-            const base = state.species.profile?.growthMs || DEMO.growthIntervalMs;
+            const base = speciesGrowthMs(state.species);
             state.growthIntervalMs = Math.round(base * (0.9 + Math.random() * 0.2));
             grow();
+            saveActivePet();
           } else renderGrowth(frac);
         }
         if (now > state.nextSkit) {
@@ -1343,7 +1988,11 @@
 
       state.fxTimer -= dt;
       if (state.fxTimer <= 0) {
-        state.fxTimer = 0.9;
+        state.fxTimer = state.playing ? 0.45 : 0.9;
+        if (state.mood === "sick" || state.needs.health < 35) {
+          fx("float", "🤒", { x: 48 + Math.random() * 10, y: 32, dx: (Math.random() - 0.5) * 40 });
+          if (Math.random() < 0.12) say(pick(["Estou doente…", "Ai…", "Me cura? 💊"]), 1800);
+        }
         if (state.mood === "sad") {
           fx("tear", "💧", { x: 40, y: 45, dx: -10 });
           fx("tear", "💧", { x: 58, y: 45, dx: 10 });
@@ -1355,6 +2004,12 @@
           if (Math.random() < 0.12) say(pick(["Humpf!", "Estou nervoso!", "Não aguento mais!", "Cuida de mim! 💢"]), 1800);
         }
         if (state.mood === "sleep") fx("zzz", "Z", { x: 58, y: 45, font: `${1.4 + Math.random()}rem` });
+        if (state.playing && Math.random() < 0.5) {
+          fx("float", pick(["✨", "💫", toyEmoji()]), { x: 30 + Math.random() * 40, y: 50 + Math.random() * 20, dx: (Math.random() - 0.5) * 60 });
+        }
+        if (state.mood === "happy" && !state.playing && Math.random() < 0.25) {
+          fx("float", "💗", { x: 40 + Math.random() * 20, y: 35, dx: (Math.random() - 0.5) * 50 });
+        }
       }
     }
 
@@ -1386,25 +2041,75 @@
     if (e.repeat) return;
     if (/^[1-6]$/.test(e.key)) press(e.key);
     if (e.key === "0") {
+      if (state.phase === "pet" && !state.preview) {
+        archiveAndNewEgg();
+        return;
+      }
       try {
         localStorage.removeItem("bichinho-hatch-bag");
         localStorage.removeItem("bichinho-audience");
       } catch (_) {}
-      location.href = "index.html";
+      location.href = "index.html?new=1";
       return;
     }
+    if ((e.key === "h" || e.key === "H") && state.phase === "pet") care("heal");
+    if ((e.key === "p" || e.key === "P") && state.phase === "pet") care("play");
+    if ((e.key === "c" || e.key === "C") && state.phase === "pet") openCloset();
+    if ((e.key === "v" || e.key === "V") && state.phase === "pet") openCollection();
     if (e.key === "9" && state.phase === "pet") { state.lastGrowth = performance.now(); grow(); }
     if (e.key === "8" && state.phase === "pet") { const s = skitForStage(); if (s) skit(s); }
-    if (e.key === "7" && state.phase === "pet") { Object.assign(state.needs, { hunger: 15, thirst: 30, love: 25 }); }
+    if (e.key === "7" && state.phase === "pet") { Object.assign(state.needs, { hunger: 15, thirst: 30, love: 25, health: 25 }); }
   });
   addEventListener("keyup", (e) => { if (/^[1-6]$/.test(e.key)) release(e.key); });
   Object.entries(buttons).forEach(([k, b]) => {
     b.addEventListener("pointerdown", (e) => { e.preventDefault(); press(k); });
     ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => b.addEventListener(ev, () => release(k)));
   });
+  el.btnHeal?.addEventListener("click", () => care("heal"));
+  el.btnPlay?.addEventListener("click", () => care("play"));
+  el.btnCloset?.addEventListener("click", () => openCloset());
+  el.btnCollection?.addEventListener("click", () => openCollection());
+  el.closetClose?.addEventListener("click", closeCloset);
+  el.collectionClose?.addEventListener("click", closeCollection);
+
+  // Arrastar brinquedo no stage
+  let toyDrag = false;
+  const moveToyFromEvent = (e) => {
+    if (!state.playing || !el.stage) return;
+    const r = el.stage.getBoundingClientRect();
+    placeToy(((e.clientX - r.left) / r.width) * 100, ((e.clientY - r.top) / r.height) * 100);
+    sparkleAt(e.clientX, e.clientY, [toyEmoji(), "✨"]);
+  };
+  el.toy?.addEventListener("pointerdown", (e) => {
+    if (!state.playing) return;
+    toyDrag = true;
+    el.toy.setPointerCapture(e.pointerId);
+    e.stopPropagation();
+    moveToyFromEvent(e);
+  });
+  el.toy?.addEventListener("pointermove", (e) => { if (toyDrag) moveToyFromEvent(e); });
+  ["pointerup", "pointercancel"].forEach((ev) => el.toy?.addEventListener(ev, () => { toyDrag = false; }));
+  el.stage?.addEventListener("pointerdown", (e) => {
+    if (!state.playing || e.target.closest(".actor") || e.target.closest(".toy") || e.target.closest(".side-care")) return;
+    moveToyFromEvent(e);
+  });
 
   let dragging = false, lastPt = null, petAccum = 0;
-  el.actor.addEventListener("pointerdown", (e) => { dragging = true; lastPt = [e.clientX, e.clientY]; el.actor.setPointerCapture(e.pointerId); setRub(true); });
+  el.actor.addEventListener("pointerdown", (e) => {
+    dragging = true; lastPt = [e.clientX, e.clientY]; el.actor.setPointerCapture(e.pointerId); setRub(true);
+    if (state.phase === "pet" && !state.sleeping) {
+      const now = performance.now();
+      state.tapBurst = now - state.lastTapAt < 420 ? state.tapBurst + 1 : 1;
+      state.lastTapAt = now;
+      if (state.tapBurst >= 3) {
+        state.tapBurst = 0;
+        rain(["💖", "✨", "😂"], 8);
+        say(pick(["Cócegas!", "Hihihihi!", "Para! Hihi!"]), 1600);
+        playMove("wobble", 800);
+        state.needs.love = clamp(state.needs.love + 5, 0, 100);
+      }
+    }
+  });
   el.actor.addEventListener("pointermove", (e) => {
     if (!dragging) return;
     const d = Math.hypot(e.clientX - lastPt[0], e.clientY - lastPt[1]);
@@ -1413,8 +2118,16 @@
     else if (state.phase === "pet") { petAccum += d; if (petAccum > 260) { petAccum = 0; care("pet"); } }
   });
   ["pointerup", "pointercancel"].forEach((ev) => el.actor.addEventListener(ev, () => { dragging = false; setRub(false); }));
-  el.wish.addEventListener("click", () => { const k = [...Object.entries(buttons)].find(([, b]) => b.classList.contains("wanted"))?.[0]; if (k) press(k), release(k); });
+  el.wish.addEventListener("click", () => {
+    const wantedSide = el.btnHeal?.classList.contains("wanted") ? "H" : el.btnPlay?.classList.contains("wanted") ? "P" : null;
+    if (wantedSide === "H") return care("heal");
+    if (wantedSide === "P") return care("play");
+    const k = [...Object.entries(buttons)].find(([, b]) => b.classList.contains("wanted"))?.[0];
+    if (k) press(k), release(k);
+  });
   addEventListener("resize", resizeFx);
+  addEventListener("pagehide", () => saveActivePet());
+  addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") saveActivePet(); });
 
   // ---------- Preview (?species=dino&stage=1&pose=plead&period=day) ----------
   function applyPreview() {
@@ -1422,6 +2135,7 @@
     const sp = SPECIES.find((s) => s.id === q.get("species"));
     if (q.get("hatch") != null) {
       state.forceSpecies = sp || null;
+      state.chosenEgg = !!sp;
       // Demo: nasce na hora o pixel pedido (sem esfregar o ovo)
       if (sp) {
         setTimeout(() => {
@@ -1430,11 +2144,31 @@
       }
       return;
     }
+    // Ovo escolhido jogável: começa opaco; no calor ideal a casca revela o PIXEL
+    if (q.get("chosen") != null && sp) {
+      state.forceSpecies = sp;
+      state.chosenEgg = true;
+      state.temp = 22;
+      state.idealMs = 0;
+      state.eggCrack = 0;
+      renderChosenEggHeader(sp);
+      renderActor();
+      renderEgg();
+      return;
+    }
     if (!q.size) return;
     state.preview = { period: q.get("period") || "day" };
-    if (q.get("egg") != null) {
-      state.temp = Number(q.get("egg")) || 57;
-      state.idealMs = 2600;
+    // Snapshot estático do peek (?species=axolotl&egg=57)
+    if (q.get("egg") != null || (sp && q.get("stage") == null && q.get("pose") == null && q.get("mood") == null)) {
+      if (sp) {
+        state.forceSpecies = sp;
+        state.chosenEgg = true;
+      }
+      state.temp = q.get("egg") != null ? (Number(q.get("egg")) || 57) : 55;
+      state.idealMs = q.get("egg") != null ? Math.max(2600, Number(q.get("push")) || 2600) : 2600;
+      if (q.get("push") != null) state.idealMs = Math.max(state.idealMs, DEMO.hatchSeconds * 1000 * 0.6);
+      if (sp) renderChosenEggHeader(sp);
+      renderActor();
       renderEgg();
       return;
     }
@@ -1452,15 +2186,16 @@
     }
     state.boosts = rolled.boosts;
     state.strongTraits = rolled.strongTraits;
-    state.growthIntervalMs = state.species.profile?.growthMs || DEMO.growthIntervalMs;
+    state.growthIntervalMs = speciesGrowthMs(state.species);
     state.lackMs = 0;
     el.app.dataset.phase = "pet";
-    Object.values(buttons).forEach((b) => (b.disabled = false));
+    enablePetUI();
     el.btn1Icon.textContent = "☀️";
     el.btn1Text.textContent = "Acordar";
-    Object.assign(state.needs, { hunger: Number(q.get("hunger") ?? 70), thirst: 62, hygiene: 80, love: 70, energy: 64 });
+    Object.assign(state.needs, { hunger: Number(q.get("hunger") ?? 70), thirst: 62, hygiene: 80, love: 70, energy: 64, health: Number(q.get("health") ?? 100) });
     state.pose = q.get("pose");
     if (state.pose === "sleep") { state.sleeping = true; state.pose = null; }
+    state.petId = state.petId || `preview-${Date.now()}`;
     renderActor(); renderHeader(); renderNeeds(); renderGrowth(0.35);
     setMood(q.get("mood") || "neutral");
     if (q.get("say")) say(q.get("say"), 1e9);
@@ -1484,7 +2219,7 @@
   });
 
   resizeFx();
-  ["egg", "egg_crack1", "egg_crack2", "egg_crack3", "egg_broken"].forEach((n) => {
+  ["egg", "egg_crack1", "egg_crack2", "egg_crack3", "egg_broken", "egg_gotinha"].forEach((n) => {
     const i = new Image();
     i.src = `${ART}${n}.webp`;
   });
@@ -1500,9 +2235,12 @@
   } else {
     state.audience = loadAudience();
   }
+  const forceNew = qBoot.get("new") != null;
   // Preview/hatch direto pula a pergunta
   if (state.preview || qBoot.get("hatch") != null || qBoot.get("species")) {
     if (!state.audience) state.audience = "both";
+    hideAudiencePick();
+  } else if (!forceNew && tryResumeSavedPet()) {
     hideAudiencePick();
   } else if (!state.audience) {
     showAudiencePick();
@@ -1512,7 +2250,11 @@
   // Filtra bag salva pelo público atual
   state.hatchBag = (state.hatchBag || []).filter((id) => readySpecies().some((s) => s.id === id));
 
-  if (!state.preview && state.audience) say("Tem um ovinho aqui! 🥚", 3000);
+  if (state.phase === "pet" && !state.preview) {
+    /* retomado — já falou oi */
+  } else if (!state.preview && state.forceSpecies) {
+    say(`Ovo escolhido! Aquece pra ver ${pick(state.forceSpecies.names)}… 🥚`, 3200);
+  } else if (!state.preview && state.audience) say("Tem um ovinho aqui! 🥚", 3000);
   else if (!state.preview && !state.audience) say("Escolhe pra quem é o PIXEL! ✨", 4000);
   requestAnimationFrame(tick);
 })();
