@@ -13,6 +13,58 @@
   const PACE = 3;
 
   const ART = "assets/pets/";
+  const SCENE = "assets/scene/";
+
+  // Bioma visual do fundo por espécie (compartilhado entre PIXELs do mesmo habitat)
+  const SPECIES_BIOME = {
+    unicorn: "meadow",
+    dino: "jungle",
+    kitty: "cozy",
+    floide: "cozy",
+    tini: "cozy",
+    duck: "pond",
+    pig: "farm",
+    tractor: "farm",
+    mole: "burrow",
+    bat: "cave",
+    seal: "arctic",
+    monkey: "jungle",
+    axolotl: "water",
+    bee: "garden",
+    butterfly: "garden",
+    nini: "garden",
+    lilica: "garden",
+    elephant: "savanna",
+    lion: "savanna",
+    racer: "garage",
+    botcar: "garage",
+    rocket: "space",
+    heli: "airfield",
+    plane: "airfield",
+    train: "station",
+    boat: "marina",
+    slime: "lab",
+  };
+
+  const BIOME_BG = {
+    meadow: `${SCENE}bg_meadow.webp`,
+    garage: `${SCENE}bg_garage.webp`,
+    marina: `${SCENE}bg_marina.webp`,
+    water: `${SCENE}bg_water.webp`,
+    savanna: `${SCENE}bg_savanna.webp`,
+    farm: `${SCENE}bg_farm.webp`,
+    pond: `${SCENE}bg_pond.webp`,
+    jungle: `${SCENE}bg_jungle.webp`,
+    cave: `${SCENE}bg_cave.webp`,
+    arctic: `${SCENE}bg_arctic.webp`,
+    burrow: `${SCENE}bg_burrow.webp`,
+    cozy: `${SCENE}bg_cozy.webp`,
+    garden: `${SCENE}bg_garden.webp`,
+    space: `${SCENE}bg_space.webp`,
+    airfield: `${SCENE}bg_airfield.webp`,
+    station: `${SCENE}bg_station.webp`,
+    lab: `${SCENE}bg_lab.webp`,
+  };
   const STAGE_LABELS = ["Ovo", "Bebê", "Criança", "Jovem", "Adulto"];
   const STAGE_SCALE = [1, 0.8, 0.87, 0.94, 1];
 
@@ -121,8 +173,8 @@
       profile: { hunger: 1.1, thirst: 1.05, hygiene: 0.95, love: 1.0, energy: 1.25, growthMs: 70_000 },
     },
     {
-      id: "butterfly", audience: "girl", ready: true, name: "Borboletinha", he: "ela", names: ["Ciça"],
-      food: "🌸", foodName: "florzinha", glow: "rgba(255,160,160,.65)",
+      id: "butterfly", audience: "girl", ready: true, name: "Joaninha", he: "ela", names: ["Ciça"],
+      food: "🍃", foodName: "folhinha", glow: "rgba(255,90,90,.65)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "fly", "mad", "sad", "scratch", "sleepy"],
       skit: "fly", childSkit: "fly", adultSkit: "fly",
@@ -166,14 +218,15 @@
       profile: { hunger: 1.25, thirst: 1.15, hygiene: 1.1, love: 1.05, energy: 1.1, growthMs: 82_000 },
     },
     {
-      id: "lion", audience: "boy", ready: true, name: "Leãozinho", he: "ele", names: ["Lali"],
+      id: "lion", audience: "boy", ready: true, name: "Leãozinho", he: "ele", names: ["Tyton"],
       food: "🥩", foodName: "carnezinha", glow: "rgba(255,160,80,.65)",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
-      poses: ["plead", "eat", "sleep", "fall", "roar", "mad", "sad", "scratch", "sleepy"],
+      poses: ["plead", "eat", "sleep", "fall", "roar", "mad", "sad", "scratch", "sleepy", "happy"],
       skit: "roar", childSkit: "roar", adultSkit: "roar",
-      focus: ["hunger", "energy"],
-      // Pouco carinho: cansa rápido de colo e pede menos
-      profile: { hunger: 1.2, thirst: 1.05, hygiene: 1.0, love: 0.55, energy: 1.15, growthMs: 78_000 },
+      focus: ["love", "hunger", "energy"],
+      // Bravo: carinho/comida caem rápido — precisa de MUITO cuidado pra sorrir
+      profile: { hunger: 1.45, thirst: 1.25, hygiene: 1.15, love: 2.15, energy: 1.4, growthMs: 78_000 },
+      temperament: "grumpy",
     },
     {
       id: "racer", audience: "boy", ready: true, name: "Carrinho", he: "ele", names: ["Turbo"],
@@ -201,6 +254,7 @@
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "launch", "mad", "sad", "scratch", "sleepy"], skit: "launch", childSkit: "launch", adultSkit: "launch",
+      sleepStages: ["adult"],
       focus: ["hunger", "energy"],
       profile: { hunger: 1.15, thirst: 1.2, hygiene: 0.9, love: 1.0, energy: 1.2, growthMs: 80_000 },
     },
@@ -210,6 +264,7 @@
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "hover", "mad", "sad", "scratch", "sleepy"], skit: "hover", childSkit: "hover", adultSkit: "hover",
+      sleepStages: ["adult"],
       focus: ["thirst", "energy"],
       profile: { hunger: 1.1, thirst: 1.2, hygiene: 1.0, love: 1.0, energy: 1.15, growthMs: 78_000 },
     },
@@ -219,6 +274,7 @@
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "chug", "mad", "sad", "scratch", "sleepy"], skit: "chug", childSkit: "chug", adultSkit: "chug",
+      sleepStages: ["adult"],
       focus: ["hunger", "thirst"],
       profile: { hunger: 1.2, thirst: 1.15, hygiene: 1.05, love: 0.95, energy: 1.1, growthMs: 82_000 },
     },
@@ -228,6 +284,7 @@
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "plough", "mad", "sad", "scratch", "sleepy"], skit: "plough", childSkit: "plough", adultSkit: "plough",
+      sleepStages: ["adult"],
       focus: ["hygiene", "hunger"],
       profile: { hunger: 1.15, thirst: 1.15, hygiene: 1.25, love: 1.0, energy: 1.05, growthMs: 80_000 },
     },
@@ -237,6 +294,7 @@
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "sail", "mad", "sad", "scratch", "sleepy"], skit: "sail", childSkit: "sail", adultSkit: "sail",
+      sleepStages: ["adult"],
       focus: ["thirst", "hygiene"],
       profile: { hunger: 1.05, thirst: 1.2, hygiene: 1.15, love: 1.05, energy: 1.0, growthMs: 76_000 },
     },
@@ -246,6 +304,7 @@
       diet: "machine",
       stages: { 1: "newborn", 2: "newborn", 3: "child", 4: "adult" },
       poses: ["plead", "eat", "sleep", "fall", "loop", "mad", "sad", "scratch", "sleepy"], skit: "loop", childSkit: "loop", adultSkit: "loop",
+      sleepStages: ["adult"],
       focus: ["energy", "hunger"],
       profile: { hunger: 1.1, thirst: 1.15, hygiene: 0.95, love: 1.0, energy: 1.2, growthMs: 78_000 },
     },
@@ -455,6 +514,8 @@
     btnCloset: $("btnCloset"), btnCollection: $("btnCollection"),
     closetPanel: $("closetPanel"), closetGrid: $("closetGrid"), closetTabs: $("closetTabs"), closetClose: $("closetClose"),
     collectionPanel: $("collectionPanel"), collectionGrid: $("collectionGrid"), collectionClose: $("collectionClose"),
+    btnNewEgg: $("btnNewEgg"),
+    sceneBg: $("sceneBg"),
     wearHat: $("wearHat"), wearFace: $("wearFace"), wearNeck: $("wearNeck"), wearBody: $("wearBody"), wearHeld: $("wearHeld"),
     stage: $("stage"),
     thermoLabel: $("thermoLabel"), thermoKnob: $("thermoKnob"), hatchFill: $("hatchFill"), thermoHint: $("thermoHint"),
@@ -510,13 +571,34 @@
     return SPECIES.filter((s) => s.ready && matchesAudience(s, state.audience));
   }
 
-  // Sorteio justo: todos os bichinhos liberados saem uma vez antes de repetir.
+  function ownedSpeciesIds() {
+    const ids = new Set();
+    try {
+      const col = loadCollection();
+      for (const p of col.pets || []) {
+        if (p?.speciesId) ids.add(p.speciesId);
+      }
+    } catch (_) { /* ignore */ }
+    if (state.species?.id && (state.phase === "pet" || state.phase === "hatching")) {
+      ids.add(state.species.id);
+    }
+    if (state.forceSpecies?.id) ids.add(state.forceSpecies.id);
+    return ids;
+  }
+
+  function availableHatchSpecies() {
+    const owned = ownedSpeciesIds();
+    return readySpecies().filter((s) => !owned.has(s.id));
+  }
+
+  // Nunca repete espécie já usada pelo mesmo usuário; bag só com os livres.
   function pickHatchSpecies() {
-    const ready = readySpecies();
-    if (!ready.length) return SPECIES.find((s) => s.ready) || SPECIES[0];
+    const pool = availableHatchSpecies();
+    if (!pool.length) return null;
+    const poolIds = new Set(pool.map((s) => s.id));
+    state.hatchBag = (state.hatchBag || []).filter((id) => poolIds.has(id));
     if (!state.hatchBag.length) {
-      state.hatchBag = ready.map((s) => s.id);
-      // Embaralha
+      state.hatchBag = pool.map((s) => s.id);
       for (let i = state.hatchBag.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [state.hatchBag[i], state.hatchBag[j]] = [state.hatchBag[j], state.hatchBag[i]];
@@ -526,7 +608,7 @@
     try {
       localStorage.setItem("bichinho-hatch-bag", JSON.stringify(state.hatchBag));
     } catch (_) { /* ignore */ }
-    return ready.find((s) => s.id === id) || ready[0];
+    return pool.find((s) => s.id === id) || pool[0];
   }
 
   try {
@@ -612,10 +694,35 @@
   }
 
   // ---------- Art selection ----------
+  function growthFracNow() {
+    if (state.stage >= 4) return 1;
+    const ms = state.growthIntervalMs || 1;
+    const started = state.lastGrowth || performance.now();
+    return clamp((performance.now() - started) / ms, 0, 0.999);
+  }
+
+  /** Chupeta só até o meio da barra de criança (stage 3). */
+  function canUsePacifier() {
+    if (state.stage <= 2) return true;
+    if (state.stage === 3) return growthFracNow() < 0.5;
+    return false;
+  }
+
+  function isLion(sp = state.species) {
+    return sp?.id === "lion" || sp?.temperament === "grumpy";
+  }
+
+  /** Tyton só fica feliz de verdade com tudo bem alto. */
+  function lionPamperedEnough() {
+    const n = state.needs;
+    return n.love >= 88 && n.hunger >= 82 && n.thirst >= 78
+      && n.hygiene >= 72 && n.energy >= 70 && n.health >= 75;
+  }
+
   function hasPose(pose) {
     if (!state.species?.poses?.includes(pose)) return false;
-    // Poses especiais de máquina / slime valem em qualquer fase
-    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce", "splash", "swing", "swim", "zip", "yarn", "hide", "stomp", "roar", "hop", "mad", "sad", "scratch", "sleepy"].includes(pose)) return true;
+    // Poses especiais de máquina / slime / humor do leão valem em qualquer fase
+    if (["car", "turbo", "launch", "hover", "chug", "plough", "sail", "loop", "bounce", "splash", "swing", "swim", "zip", "yarn", "hide", "stomp", "roar", "hop", "mad", "sad", "scratch", "sleepy", "happy"].includes(pose)) return true;
     return state.stage === 1;
   }
   function artKey(sp) {
@@ -628,8 +735,17 @@
   function sleepArt(sp, stage) {
     const key = sp.stages[stage];
     const ak = artKey(sp);
-    if ((sp.sleepStages || []).includes(key)) return `${ART}${ak}_${key}_sleep.webp`;
-    if (sp.poses.includes("sleep")) return `${ART}${ak}_sleep.webp`;
+    const staged = sp.sleepStages || [];
+    if (canUsePacifier()) {
+      // Bebê / início da criança: arte com chupeta (*_sleep.webp)
+      if (sp.poses.includes("sleep")) return `${ART}${ak}_sleep.webp`;
+      if (staged.includes(key)) return `${ART}${ak}_${key}_sleep.webp`;
+      return null;
+    }
+    // Sem chupeta: nunca usar *_sleep.webp genérico (quase sempre tem chupeta)
+    if (staged.includes("adult")) return `${ART}${ak}_adult_sleep.webp`;
+    if (staged.includes("child")) return `${ART}${ak}_child_sleep.webp`;
+    if (staged.includes(key) && key !== "newborn") return `${ART}${ak}_${key}_sleep.webp`;
     return null;
   }
   function wantsSomething() {
@@ -641,13 +757,20 @@
     const n = state.needs;
     const has = (p) => state.species.poses.includes(p);
     if ((state.mood === "sick" || n.health < 35) && has("sad")) return "sad";
+    // Tyton: cara fechada (mad) até estar MUITO bem cuidado; sorriso só no happy
+    if (isLion()) {
+      if (state.mood === "happy" && lionPamperedEnough() && has("happy")) return "happy";
+      if (state.mood === "sad" && has("sad")) return "sad";
+      if (has("mad")) return "mad";
+    }
     if (state.mood === "mad" && has("mad")) return "mad";
     const order = ["health", "hygiene", "energy", "love", "hunger", "thirst"];
     const worst = order.slice().sort((a, b) => n[a] - n[b])[0];
     if (n[worst] < 40) {
       if (worst === "health" && has("sad")) return "sad";
       if (worst === "hygiene" && has("scratch")) return "scratch";
-      if (worst === "energy" && has("sleepy")) return "sleepy";
+      // sleepy.webp quase sempre tem chupeta — só no bebê / início da criança
+      if (worst === "energy" && has("sleepy") && canUsePacifier()) return "sleepy";
       if (worst === "love" && has("sad")) return "sad";
       if ((worst === "hunger" || worst === "thirst") && has("plead")) return "plead";
     }
@@ -701,15 +824,22 @@
       updatedAt: Date.now(),
       growthIntervalMs: state.growthIntervalMs,
       lackMs: state.lackMs,
+      growthProgress: growthFracNow(),
+      frozen: false,
     };
   }
-  function saveActivePet() {
+  function saveActivePet({ freeze = false } = {}) {
     const snap = snapshotPet();
     if (!snap) return;
+    if (freeze) {
+      snap.frozen = true;
+      snap.sleeping = false;
+      snap.mood = snap.mood === "sleep" ? "happy" : (snap.mood || "happy");
+    }
     const col = loadCollection();
     const i = col.pets.findIndex((p) => p.id === snap.id);
     if (i >= 0) col.pets[i] = snap; else col.pets.push(snap);
-    col.activePetId = snap.id;
+    col.activePetId = freeze ? null : snap.id;
     col.version = 1;
     writeCollection(col);
   }
@@ -721,7 +851,7 @@
       phase: "pet",
       petId: snap.id,
       species,
-      name: snap.name || pick(species.names),
+      name: (snap.name === "Lali" && species.id === "lion") ? "Tyton" : (snap.name || pick(species.names)),
       stage: clamp(snap.stage || 1, 1, 4),
       needs: { hunger: 80, thirst: 80, hygiene: 85, love: 75, energy: 90, health: 100, ...(snap.needs || {}) },
       sleeping: !!snap.sleeping,
@@ -730,15 +860,23 @@
       outfit: { ...emptyOutfit(), ...(snap.outfit || {}) },
       activeToyId: snap.activeToyId || null,
       hatchAt: snap.hatchAt || Date.now(),
-      growthIntervalMs: speciesGrowthMs(species),
+      growthIntervalMs: snap.growthIntervalMs || speciesGrowthMs(species),
       lackMs: snap.lackMs || 0,
       pose: null,
       busy: false,
       playing: false,
       actorOff: { x: 0, y: 0 },
-      lastGrowth: performance.now(),
+      lastGrowth: performance.now() - clamp(snap.growthProgress || 0, 0, 0.999) * (snap.growthIntervalMs || speciesGrowthMs(species)),
       nextSkit: performance.now() + 8000,
     });
+    // Descongela ao voltar a brincar — status continua exatamente como foi pausado
+    const col = loadCollection();
+    const i = col.pets.findIndex((p) => p.id === snap.id);
+    if (i >= 0) {
+      col.pets[i] = { ...col.pets[i], frozen: false, updatedAt: Date.now() };
+      col.activePetId = snap.id;
+      writeCollection(col);
+    }
     el.app.dataset.phase = "pet";
     el.app.classList.remove("playing");
     if (el.toy) el.toy.hidden = true;
@@ -747,23 +885,37 @@
     el.btn1Text.textContent = "Acordar";
     renderActor(); renderOutfit(); renderHeader(); renderNeeds(); renderGrowth();
     setMood(snap.sleeping ? "sleep" : (snap.mood || "happy"), 1200);
-    say(`Oi de novo! Eu sou ${state.name}! 💖`, 2400);
+    say(snap.frozen ? `${state.name} acordou do pausado! 💖` : `Oi de novo! Eu sou ${state.name}! 💖`, 2400);
   }
   function tryResumeSavedPet() {
     if (state.preview) return false;
     const q = new URLSearchParams(location.search);
     if (q.get("hatch") != null || q.get("species") || q.get("egg") != null) return false;
+    if (q.get("new") != null) return false;
     const col = loadCollection();
-    const snap = col.pets.find((p) => p.id === col.activePetId) || col.pets[col.pets.length - 1];
-    if (!snap) return false;
+    const snap = col.pets.find((p) => p.id === col.activePetId);
+    if (!snap || snap.frozen) return false;
     applyPetSnapshot(snap);
     return true;
   }
+  function canStartNewEgg() {
+    return availableHatchSpecies().length > 0;
+  }
   function archiveAndNewEgg() {
-    saveActivePet();
-    const col = loadCollection();
-    col.activePetId = null;
-    writeCollection(col);
+    if (state.preview) return;
+    if (state.phase === "pet") {
+      if (!canStartNewEgg()) {
+        openCollection();
+        say("Você já tem todos os PIXELs desta turma! 🎉", 3200);
+        return;
+      }
+      saveActivePet({ freeze: true });
+    }
+    try {
+      // Reconstrói a bag sem espécies já usadas
+      state.hatchBag = [];
+      localStorage.removeItem("bichinho-hatch-bag");
+    } catch (_) {}
     location.href = "index.html?new=1";
   }
 
@@ -841,31 +993,45 @@
   }
   function renderCollection() {
     if (!el.collectionGrid) return;
-    saveActivePet();
+    if (state.phase === "pet" && !state.preview) saveActivePet();
     const col = loadCollection();
+    const left = availableHatchSpecies().length;
+    const newBtn = el.btnNewEgg;
+    if (newBtn) {
+      newBtn.disabled = left <= 0;
+      newBtn.classList.toggle("done", left <= 0);
+      const sub = newBtn.querySelector(".cne-txt i");
+      if (sub) {
+        sub.textContent = left <= 0
+          ? "Você já encontrou todos os amiguinhos desta turma!"
+          : `Seu PIXEL atual fica pausado · ${left} novo${left === 1 ? "" : "s"} ainda`;
+      }
+    }
     el.collectionGrid.innerHTML = "";
     if (!col.pets.length) {
-      el.collectionGrid.innerHTML = `<p class="collection-empty">Ainda não tem PIXELs salvos. Nasça um ovinho!</p>`;
+      el.collectionGrid.innerHTML = `<p class="collection-empty">Ainda não tem PIXELs. Nasça um ovinho!</p>`;
       return;
     }
     col.pets.slice().reverse().forEach((p) => {
       const sp = SPECIES.find((s) => s.id === p.speciesId);
       const card = document.createElement("button");
       card.type = "button";
-      card.className = "collection-card" + (p.id === col.activePetId ? " active" : "");
+      const isActive = p.id === col.activePetId && !p.frozen;
+      card.className = "collection-card" + (isActive ? " active" : "") + (p.frozen ? " frozen" : "");
       const prevV = state.variant;
       if (sp && p.variant) state.variant = p.variant;
       const thumb = sp ? baseArt(sp, clamp(p.stage || 1, 1, 4)) : "";
       state.variant = prevV;
       const face = p.outfit?.face && CLOSET_ITEMS.find((i) => i.id === p.outfit.face)?.emoji;
       const hat = p.outfit?.hat && CLOSET_ITEMS.find((i) => i.id === p.outfit.hat)?.emoji;
-      card.innerHTML = `<span class="thumb" style="background-image:url(${thumb})"></span><span class="meta"><b>${p.name || sp?.name || "PIXEL"}</b><i>${sp?.name || ""} · ${STAGE_LABELS[p.stage] || ""}</i></span><span class="bits">${hat || ""}${face || ""}</span>`;
+      const badge = p.frozen ? `<span class="pause-badge">⏸ pausado</span>` : (isActive ? `<span class="pause-badge live">agora</span>` : "");
+      card.innerHTML = `<span class="thumb" style="background-image:url(${thumb})"></span><span class="meta"><b>${p.name || sp?.name || "PIXEL"}</b><i>${sp?.name || ""} · ${STAGE_LABELS[p.stage] || ""}</i>${badge}</span><span class="bits">${hat || ""}${face || ""}</span>`;
       card.addEventListener("click", () => {
-        saveActivePet();
+        if (state.phase === "pet" && !state.preview) saveActivePet({ freeze: true });
         const c = loadCollection();
         c.activePetId = p.id;
         writeCollection(c);
-        applyPetSnapshot(p);
+        applyPetSnapshot({ ...p, frozen: false });
         closeCollection();
       });
       el.collectionGrid.appendChild(card);
@@ -1067,10 +1233,14 @@
   }
 
   function setMood(m, lockMs = 0) {
+    const prev = state.mood;
     if (state.mood !== m) {
       state.mood = m;
       el.actor.dataset.mood = m;
       if (m === "happy") { el.actorImg.style.animation = "none"; void el.actorImg.offsetWidth; el.actorImg.style.animation = ""; }
+      if (prev !== m && state.species && window.PixelAudio) {
+        window.PixelAudio.speak(state.species.id, m);
+      }
     }
     if (lockMs) state.moodLock = performance.now() + lockMs;
   }
@@ -1152,6 +1322,7 @@
     el.avatar.style.backgroundImage = `url(${baseArt(sp, 1)})`;
     el.petName.textContent = pick(sp.names);
     el.petStage.textContent = `${sp.name} · ovo escolhido`;
+    syncBiome();
   }
   function renderHeader() {
     if (!state.species) return;
@@ -1160,6 +1331,22 @@
     el.petStage.textContent = `${state.species.name} · ${STAGE_LABELS[state.stage]}`;
     applyDietUI();
     renderTraitBanner();
+    syncBiome();
+  }
+  function speciesBiome(sp = state.species) {
+    if (!sp) return "meadow";
+    return sp.biome || SPECIES_BIOME[sp.id] || "meadow";
+  }
+  function syncBiome() {
+    const biome = state.phase === "egg" || state.phase === "hatching"
+      ? (state.forceSpecies ? speciesBiome(state.forceSpecies) : "meadow")
+      : speciesBiome(state.species);
+    const url = BIOME_BG[biome] || BIOME_BG.meadow;
+    if (el.sceneBg) {
+      el.sceneBg.style.backgroundImage = `url("${url}")`;
+    }
+    if (el.app) el.app.dataset.biome = biome;
+    if (window.PixelAudio) window.PixelAudio.setBiome(biome);
   }
   function renderGrowth(frac = 0) {
     el.growthFill.style.width = `${clamp(((state.stage + frac) / 4) * 100, 0, 100)}%`;
@@ -1266,7 +1453,12 @@
       const day = el.app.dataset.period === "day";
       return setGuide(day && state.needs.energy > 90 ? `${p} já descansou! Aperte ☀️ Acordar` : `Shhh… ${p} está dormindo 💤`, day && state.needs.energy > 90 ? "1" : null);
     }
-    if (state.mood === "mad") return setGuide(`${p} está nervoso! Olha a carinha dele — cuida agora! 💢`, null, "😤", true);
+    if (state.mood === "mad") {
+      if (isLion()) {
+        return setGuide(`${p} está bravo! Dê MUITO carinho, comida e brincadeira! 🦁💢`, "5", "💗", true);
+      }
+      return setGuide(`${p} está nervoso! Olha a carinha dele — cuida agora! 💢`, null, "😤", true);
+    }
     if (state.mood === "sick" || state.needs.health < 40) {
       return setGuide(`${p} está doente… Aperte 💊 Saúde na lateral!`, "H", "💊", true);
     }
@@ -1310,10 +1502,22 @@
       return setGuide(text, need.key, icon, n[worst] < 25);
     }
     if (night) return setGuide(`Está de noite… hora de nanar? 🌙`, "6", "🌙");
+    if (isLion() && !lionPamperedEnough()) {
+      const nL = state.needs;
+      if (nL.love < 88) return setGuide(`${p} ainda está carrancudo… Mais carinho! 💗💗💗`, "5", "💗", true);
+      if (nL.hunger < 82) return setGuide(`${p} grunhe de fome… Mais ${state.species.foodName}! 🥩`, "2", state.species.food, true);
+      return setGuide(`${p} quase sorri… Brinca um pouco! ${toyEmoji()}`, "P", toyEmoji(), true);
+    }
     if (n.energy > 40 && n.love < 85 && Math.random() < 0.002) {
       return setGuide(`Que tal brincar? Aperte Brincar e arraste o ${toyEmoji()}!`, "P", toyEmoji());
     }
-    setGuide(`${p} está feliz! Faça carinho, ou aperte Brincar ${toyEmoji()}`, "P", "💕");
+    setGuide(
+      isLion()
+        ? `${p} finalmente sorriu! Continue mimando 🦁💕`
+        : `${p} está feliz! Faça carinho, ou aperte Brincar ${toyEmoji()}`,
+      "P",
+      "💕"
+    );
   }
 
   // ---------- Clumsy baby skits ----------
@@ -1557,8 +1761,10 @@
   // ---------- Game flow ----------
   function setEggCrack(level, withShake = true) {
     if (state.eggCrack === level) return;
+    const grew = level > (state.eggCrack || 0);
     state.eggCrack = level;
     renderActor();
+    if (grew && level > 0 && window.PixelAudio) window.PixelAudio.cue("crack");
     if (withShake && level > 0) {
       el.actor.classList.remove("crack-shake");
       void el.actor.offsetWidth;
@@ -1579,6 +1785,14 @@
 
     // Ovo escolhido já tinha o PIXEL; surpresa só revela no final.
     species = species || state.forceSpecies || pickHatchSpecies();
+    if (!species) {
+      state.phase = "egg";
+      el.actor.classList.remove("hatching");
+      el.app.dataset.phase = "egg";
+      say("Você já tem todos os PIXELs! Abra Meus PIXELs 🏡", 3600);
+      openCollection();
+      return;
+    }
     if (wasChosenEgg) state.forceSpecies = species;
     applyVariant(species, pickVariant(species));
     preload(species);
@@ -1601,6 +1815,7 @@
     el.actor.classList.add("hatch-burst");
     flash();
     burst(140, 0.5);
+    if (window.PixelAudio) window.PixelAudio.cue("hatch");
     await wait(500);
 
     const knewSpecies = wasChosenEgg;
@@ -1629,9 +1844,18 @@
     enablePetUI();
     el.btn1Icon.textContent = "☀️";
     el.btn1Text.textContent = "Acordar";
-    setMood("happy", 2000);
-    rain(["✨", "💖", "⭐"], 10);
-    say(knewSpecies ? `Sou eu, ${state.name}! 💖` : `Surpresa! Eu sou ${state.name}! 💖`, 2600);
+    if (isLion(species)) {
+      Object.assign(state.needs, { hunger: 45, thirst: 50, hygiene: 55, love: 28, energy: 50, health: 85 });
+      setMood("mad", 2800);
+      rain(["✨", "💢", "⭐"], 10);
+      say(`Sou ${state.name}! Grr… me conquiste com MUITO carinho! 🦁`, 3200);
+      if (window.PixelAudio) window.PixelAudio.speak("lion", "mad", { force: true });
+    } else {
+      setMood("happy", 2000);
+      rain(["✨", "💖", "⭐"], 10);
+      say(knewSpecies ? `Sou eu, ${state.name}! 💖` : `Surpresa! Eu sou ${state.name}! 💖`, 2600);
+      if (window.PixelAudio && species) window.PixelAudio.speak(species.id, "happy", { force: true });
+    }
     setTimeout(() => {
       const line = rolled.phrases.map((p) => p.text).join(" ");
       say(line, 4200);
@@ -1779,8 +2003,15 @@
     if (state.phase !== "pet") return;
     if (state.sleeping && kind !== "wake") { say("Shhh… zzz", 1400); rain(["💤"], 2, "zzz"); return; }
     if (state.busy && kind !== "wake") return;
+    if (window.PixelAudio) {
+      const map = { feed: "feed", drink: "drink", bath: "bath", pet: "pet", play: "play", sleep: "sleep", wake: "wake", heal: "heal" };
+      if (map[kind]) window.PixelAudio.cue(map[kind], state.species?.id);
+    }
     const n = state.needs;
-    const boost = 12 + state.stage * 4;
+    // Tyton sobe bem mais devagar — precisa de MUITAS ações
+    const boost = isLion()
+      ? (4 + state.stage * 2)
+      : (12 + state.stage * 4);
     const tooMuch = (key, limit, msg) => {
       if (n[key] <= limit) return false;
       state.over[key]++;
@@ -1796,20 +2027,20 @@
       if (tooMuch("hunger", 92, isMachine() ? "Já tenho peças demais! 🔧" : "Minha barriguinha tá cheia! 😣")) return;
       state.busy = true;
       await throwTo("2", state.species.food);
-      n.hunger = clamp(n.hunger + boost + 8, 0, 100);
+      n.hunger = clamp(n.hunger + boost + (isLion() ? 4 : 8), 0, 100);
       relieve("hunger");
       state.pose = "eat"; renderActor();
       el.actor.dataset.mood = "neutral";
       playMove("munch", 2200);
-      say(isMachine() ? `Clinc clanc! Amo ${state.species.foodName}! 🔧` : `Nham nham! Amo ${state.species.foodName}! 😋`, 2200);
+      say(isMachine() ? `Clinc clanc! Amo ${state.species.foodName}! 🔧` : (isLion() ? `Grr… nham. Quero MAIS carnezinha! 🥩` : `Nham nham! Amo ${state.species.foodName}! 😋`), 2200);
       for (let i = 0; i < 5; i++) setTimeout(() => fx("float", pick(["✨", state.species.food, "💛"]), { x: 40 + Math.random() * 20, y: 45, dx: (Math.random() - 0.5) * 90 }), i * 300);
       await wait(2300);
       state.pose = null; state.busy = false;
     } else if (kind === "drink") {
       if (tooMuch("thirst", 92, isMachine() ? "Tanque cheio! ⛽" : "Chega de água! 💦")) return;
       state.busy = true;
-      await throwTo("3", isMachine() ? "⛽" : (state.stage <= 2 ? "🍼" : "🥛"));
-      n.thirst = clamp(n.thirst + boost + 10, 0, 100);
+      await throwTo("3", isMachine() ? "⛽" : (canUsePacifier() ? "🍼" : "🥛"));
+      n.thirst = clamp(n.thirst + boost + (isLion() ? 5 : 10), 0, 100);
       relieve("thirst");
       playMove("munch", 1500);
       rain(isMachine() ? ["⛽", "🛢️", "✨"] : ["💧", "💦"], 5);
@@ -1818,18 +2049,21 @@
       state.busy = false;
     } else if (kind === "bath") {
       if (tooMuch("hygiene", 90, "Já estou limpinho!")) return;
-      n.hygiene = clamp(n.hygiene + 35, 0, 100);
+      n.hygiene = clamp(n.hygiene + (isLion() ? 18 : 35), 0, 100);
       relieve("hygiene");
       for (let i = 0; i < 14; i++) setTimeout(() => fx("bubble-soap", "", { x: 15 + Math.random() * 70, y: 30 + Math.random() * 55, dx: (Math.random() - 0.5) * 80, size: 16 + Math.random() * 34 }), i * 70);
       playMove("wobble", 1400);
-      say(pick(["Splash! 🫧", "Cosquinha! Hihi", "Cheirosinho!"]));
+      say(isLion() ? pick(["Grr… molhado.", "Humf.", "Só um pouquinho…"]) : pick(["Splash! 🫧", "Cosquinha! Hihi", "Cheirosinho!"]));
     } else if (kind === "pet") {
-      const loveCap = state.species.id === "lion" ? 55 : 94;
-      if (tooMuch("love", loveCap, state.species.id === "lion" ? "Grr! Chega de carinho! 🦁" : "Ai, chega de apertar! 😤")) return;
-      n.love = clamp(n.love + boost, 0, 100);
+      // Tyton ACEITA muito carinho — é assim que ele melhora
+      const loveCap = isLion() ? 98 : 94;
+      if (tooMuch("love", loveCap, isLion() ? "Grr! Agora chega um pouquinho… 🦁" : "Ai, chega de apertar! 😤")) return;
+      n.love = clamp(n.love + boost + (isLion() ? 2 : 0), 0, 100);
       relieve("love");
-      rain(["💖", "💗", "💕", "🥰"], 7);
-      say(pick(["Hihihi!", "Te amo! 💖", "Mais um abraço!", "Rrrrrr… 😊"]));
+      rain(["💖", "💗", "💕", "🥰"], isLion() ? 4 : 7);
+      say(isLion()
+        ? pick(["…humf.", "Grr… mais um?", "Tá… só mais um carinho.", "Rrr… talvez eu goste."])
+        : pick(["Hihihi!", "Te amo! 💖", "Mais um abraço!", "Rrrrrr… 😊"]));
     } else if (kind === "sleep") {
       if (!state.sleeping) {
         if (state.playing) setPlaying(false);
@@ -1846,13 +2080,13 @@
       if (!state.sleeping) { say("Já estou acordado!", 1400); return; }
       state.sleeping = false;
       rain(["☀️", "✨"], 4);
-      say("Bom dia!! ☀️", 2000);
+      say(isLion() ? "Grr… dia. 🦁" : "Bom dia!! ☀️", 2000);
     } else if (kind === "heal") {
       if (n.health > 92) { say(isMachine() ? "Já estou novinho! 🛠️" : "Já estou saudável! 💚", 1600); return; }
       state.busy = true;
       rain(isMachine() ? ["🛠️", "🔩", "✨"] : ["💊", "💚", "✨"], 10);
       playMove("wobble", 1200);
-      n.health = clamp(n.health + 38, 0, 100);
+      n.health = clamp(n.health + (isLion() ? 22 : 38), 0, 100);
       n.hygiene = clamp(n.hygiene + 6, 0, 100);
       say(isMachine() ? "Consertado! Vruum! 🛠️" : "Já estou melhor! 💚", 2200);
       await wait(1400);
@@ -1863,11 +2097,24 @@
       if (refuseBecauseSick("play")) return;
       if (n.energy < 12) { say("Estou cansadinho demais… 😴", 1800); return; }
       setPlaying(!state.playing);
+      if (state.playing && isLion()) {
+        n.love = clamp(n.love + 3, 0, 100);
+        say(pick(["Grr… brincar?", "…tudo bem. Vamos.", "Roar! Só um pouco."]), 1800);
+      }
       renderNeeds();
+      evaluateMood(performance.now() + 1);
+      renderActor();
+      saveActivePet();
       return;
     }
-    setMood("happy", 1600);
-    state.lackMs = Math.max(0, state.lackMs - 4000);
+    // Não força "feliz" no Tyton — ele só sorri se estiver bem cuidado
+    if (isLion()) {
+      state.moodLock = 0;
+      evaluateMood(performance.now() + 1);
+    } else {
+      setMood("happy", 1600);
+    }
+    state.lackMs = Math.max(0, state.lackMs - (isLion() ? 1500 : 4000));
     renderActor();
     renderNeeds();
     saveActivePet();
@@ -1890,6 +2137,14 @@
     if (lows.length >= 1 || n.hunger < 28 || n.thirst < 28 || n.love < 25 || n.energy < 22 || n.hygiene < 22) {
       return setMood("sad");
     }
+
+    // Tyton: só sorri depois de MUITO carinho, comida, brincadeira…
+    if (isLion()) {
+      if (lionPamperedEnough() && (state.playing || n.love >= 92)) return setMood("happy");
+      if (n.love < 70 || n.hunger < 65 || n.energy < 55) return setMood("mad");
+      return setMood("neutral");
+    }
+
     if (state.playing) return setMood("happy");
     if (n.hunger > 60 && n.thirst > 60 && n.love > 55 && n.hygiene > 50 && n.health > 55) return setMood("happy");
     setMood("neutral");
@@ -1912,6 +2167,12 @@
     const dt = Math.min(0.1, (now - state.last) / 1000);
     state.last = now;
     if (!tick.c || now - tick.c > 300) { tick.c = now; updateClock(); updateGuide(); }
+    if (!tick.snd || now - tick.snd > 6000) {
+      tick.snd = now;
+      if (state.phase === "pet" && state.species && window.PixelAudio) {
+        window.PixelAudio.tickNeeds(state.species.id, state.needs);
+      }
+    }
 
     if (state.phase === "egg" && !state.preview) {
       if (!state.audience) {
@@ -2071,6 +2332,13 @@
   el.btnCollection?.addEventListener("click", () => openCollection());
   el.closetClose?.addEventListener("click", closeCloset);
   el.collectionClose?.addEventListener("click", closeCollection);
+  el.btnNewEgg?.addEventListener("click", () => {
+    if (!canStartNewEgg()) {
+      say("Você já tem todos os PIXELs desta turma! 🎉", 2800);
+      return;
+    }
+    archiveAndNewEgg();
+  });
 
   // Arrastar brinquedo no stage
   let toyDrag = false;
@@ -2226,6 +2494,7 @@
   renderActor();
   renderEgg();
   renderGrowth();
+  syncBiome();
   applyPreview();
 
   const qBoot = new URLSearchParams(location.search);

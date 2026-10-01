@@ -1,14 +1,19 @@
 /* Service worker — Pixel Play PWA */
-const CACHE = "bichinho-v0.1.40";
+const CACHE = "bichinho-v0.1.44";
 const PRECACHE = [
   "./",
   "./index.html",
   "./styles.css",
   "./game.js",
+  "./audio.js",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png",
-  "./assets/scene/bg_day.webp",
+  "./assets/scene/bg_meadow.webp",
+  "./assets/scene/bg_garage.webp",
+  "./assets/scene/bg_marina.webp",
+  "./assets/scene/bg_water.webp",
+  "./assets/scene/bg_savanna.webp",
 ];
 
 self.addEventListener("install", (event) => {

@@ -31,7 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=0.1.40" />
+  <link rel="stylesheet" href="styles.css?v=0.1.44" />
 </head>
 <body>
   <div class="ios-install" id="iosInstall" hidden>
@@ -90,6 +90,9 @@
         <span class="clock-icon" id="clockIcon">☀️</span>
         <span class="clock-time" id="clockTime">--:--</span>
       </div>
+      <button type="button" class="mute-btn glass" id="btnMute" title="Som ligado (desligar)" aria-pressed="false" aria-label="Ligar ou desligar som">
+        <span class="i">🔊</span>
+      </button>
     </header>
 
     <p class="trait-banner" id="traitBanner" hidden></p>
@@ -138,9 +141,9 @@
         <span class="i">👗</span>
         <span class="t">Armário</span>
       </button>
-      <button type="button" class="side-btn side-collection" id="btnCollection" data-key="V" disabled title="Coleção (V)">
-        <span class="i">📦</span>
-        <span class="t">Coleção</span>
+      <button type="button" class="side-btn side-collection" id="btnCollection" data-key="V" disabled title="Meus PIXELs (V)">
+        <span class="i">🏡</span>
+        <span class="t">Meus PIXELs</span>
       </button>
     </aside>
 
@@ -158,11 +161,18 @@
     <div class="sheet" id="collectionPanel" hidden>
       <div class="sheet-card">
         <header class="sheet-head">
-          <h2>Minha coleção</h2>
+          <h2>🏡 Meus PIXELs</h2>
           <button type="button" class="sheet-x" id="collectionClose" aria-label="Fechar">✕</button>
         </header>
+        <button type="button" class="collection-new-egg" id="btnNewEgg">
+          <span class="cne-ico">🥚</span>
+          <span class="cne-txt">
+            <b>Pegar ovo novo</b>
+            <i>Seu PIXEL atual fica pausado no tempo</i>
+          </span>
+        </button>
         <div class="collection-grid" id="collectionGrid"></div>
-        <p class="sheet-hint">Toque num PIXEL para brincar com ele. <kbd>0</kbd> guarda e nasce ovo novo.</p>
+        <p class="sheet-hint">Toque num PIXEL pausado para brincar de novo. Cada amiguinho é diferente — nunca repete!</p>
       </div>
     </div>
 
@@ -194,13 +204,14 @@
         <li data-i="0">🥚</li><li data-i="1">Bebê</li><li data-i="2">Criança</li><li data-i="3">Jovem</li><li data-i="4">Adulto</li>
       </ol>
       <div class="growth-bar"><i id="growthFill"></i></div>
-      <p class="meta">Demo · 1 dia ≈ 6 min · cresce bem mais devagar · teste: <kbd>0</kbd> novo ovo <kbd>7</kbd> fome <kbd>8</kbd> trapalhada <kbd>9</kbd> crescer · <span id="appVersion">V0.1.40</span></p>
+      <p class="meta">Demo · 1 dia ≈ 6 min · cresce bem mais devagar · teste: <kbd>0</kbd> novo ovo <kbd>7</kbd> fome <kbd>8</kbd> trapalhada <kbd>9</kbd> crescer · <span id="appVersion">V0.1.44</span></p>
     </footer>
 
     <div class="flash" id="flash"></div>
     <div class="projectiles" id="projectiles"></div>
   </main>
-  <script src="game.js?v=0.1.40"></script>
+  <script src="audio.js?v=0.1.44"></script>
+  <script src="game.js?v=0.1.44"></script>
   <script>
     (function () {
       const ua = navigator.userAgent || "";
