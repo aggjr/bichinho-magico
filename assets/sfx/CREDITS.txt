@@ -1,0 +1,12 @@
+Pixel Play — créditos de áudio
+==============================
+
+Sons de efeito (Mixkit License — grátis para uso comercial):
+  https://mixkit.co/free-sound-effects/
+  Envato / Mixkit — sem atribuição obrigatória, mas agradecemos.
+
+Arquivos locais gerados para o jogo:
+  hiccup.wav — soluço fofo de bebê (gerado para o Pixel Play)
+
+Pastas:
+  assets/sfx/*.mp3 — vozes de animais, veículos, água, engraçados

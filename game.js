@@ -2,15 +2,15 @@
   "use strict";
 
   const DEMO = {
-    dayLengthMs: 360_000,       // 1 dia ≈ 6 min (antes 2 min)
-    growthIntervalMs: 135_000,  // ~2,25 min por fase (antes 45 s)
+    dayLengthMs: 176_400,       // 1 dia ≈ 2,9 min (−30% vs 4,2 min)
+    growthIntervalMs: 94_500,   // ~1,6 min por fase (−30%)
     idealMin: 48,
     idealMax: 66,
-    hatchSeconds: 4,
+    hatchSeconds: 3.36,         // ovo −30% vs 4,8s
   };
 
-  // Ritmo geral: 1 = original; 3 = 3× mais lento (demandas + crescimento)
-  const PACE = 3;
+  // Ritmo geral: 1 = original; menor = mais rápido (demandas + crescimento)
+  const PACE = 2.1;             // −30% vs 3
 
   const ART = "assets/pets/";
   const SCENE = "assets/scene/";
@@ -383,6 +383,8 @@
     energy: 0.24 / PACE,
     health: 0.08 / PACE,
   };
+  // Energia sobe ao dormir (valor negativo em decayRates); +35% vs base 5
+  const SLEEP_ENERGY_GAIN = 6.75 / PACE;
 
   // Armário: brinquedos + roupas + fantasias (overlays emoji; tudo liberado)
   const CLOSET_ITEMS = [
@@ -589,26 +591,6 @@
   function availableHatchSpecies() {
     const owned = ownedSpeciesIds();
     return readySpecies().filter((s) => !owned.has(s.id));
-  }
-
-  // Nunca repete espécie já usada pelo mesmo usuário; bag só com os livres.
-  function pickHatchSpecies() {
-    const pool = availableHatchSpecies();
-    if (!pool.length) return null;
-    const poolIds = new Set(pool.map((s) => s.id));
-    state.hatchBag = (state.hatchBag || []).filter((id) => poolIds.has(id));
-    if (!state.hatchBag.length) {
-      state.hatchBag = pool.map((s) => s.id);
-      for (let i = state.hatchBag.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [state.hatchBag[i], state.hatchBag[j]] = [state.hatchBag[j], state.hatchBag[i]];
-      }
-    }
-    const id = state.hatchBag.pop();
-    try {
-      localStorage.setItem("bichinho-hatch-bag", JSON.stringify(state.hatchBag));
-    } catch (_) { /* ignore */ }
-    return pool.find((s) => s.id === id) || pool[0];
   }
 
   try {
@@ -831,12 +813,17 @@
   function saveActivePet({ freeze = false } = {}) {
     const snap = snapshotPet();
     if (!snap) return;
+    const col = loadCollection();
+    // Não desfaz arquivo/freeze (ex.: pagehide depois de "Pegar ovo novo")
+    if (!freeze) {
+      const existing = col.pets.find((p) => p.id === snap.id);
+      if (existing?.frozen && col.activePetId == null) return;
+    }
     if (freeze) {
       snap.frozen = true;
       snap.sleeping = false;
       snap.mood = snap.mood === "sleep" ? "happy" : (snap.mood || "happy");
     }
-    const col = loadCollection();
     const i = col.pets.findIndex((p) => p.id === snap.id);
     if (i >= 0) col.pets[i] = snap; else col.pets.push(snap);
     col.activePetId = freeze ? null : snap.id;
@@ -899,24 +886,47 @@
     return true;
   }
   function canStartNewEgg() {
-    return availableHatchSpecies().length > 0;
+    // Sempre pode pegar ovo novo (se ainda houver espécies ready no público)
+    return readySpecies().length > 0;
+  }
+
+  // Prefere espécie nova; se já tiver todas, pode repetir
+  function pickHatchSpecies() {
+    let pool = availableHatchSpecies();
+    if (!pool.length) pool = readySpecies();
+    if (!pool.length) return null;
+    const poolIds = new Set(pool.map((s) => s.id));
+    state.hatchBag = (state.hatchBag || []).filter((id) => poolIds.has(id));
+    if (!state.hatchBag.length) {
+      state.hatchBag = pool.map((s) => s.id);
+      for (let i = state.hatchBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.hatchBag[i], state.hatchBag[j]] = [state.hatchBag[j], state.hatchBag[i]];
+      }
+    }
+    const id = state.hatchBag.pop();
+    try {
+      localStorage.setItem("bichinho-hatch-bag", JSON.stringify(state.hatchBag));
+    } catch (_) { /* ignore */ }
+    return pool.find((s) => s.id === id) || pool[0];
   }
   function archiveAndNewEgg() {
     if (state.preview) return;
+    if (!canStartNewEgg()) {
+      say("Ainda não tem PIXELs liberados pra esse público…", 2800);
+      return;
+    }
     if (state.phase === "pet") {
-      if (!canStartNewEgg()) {
-        openCollection();
-        say("Você já tem todos os PIXELs desta turma! 🎉", 3200);
-        return;
-      }
       saveActivePet({ freeze: true });
     }
     try {
-      // Reconstrói a bag sem espécies já usadas
+      // Reconstrói a bag (prioriza espécies ainda não usadas)
       state.hatchBag = [];
       localStorage.removeItem("bichinho-hatch-bag");
+      localStorage.setItem("bichinho-force-new-egg", "1");
     } catch (_) {}
-    location.href = "index.html?new=1";
+    state.skipAutosave = true;
+    location.href = "./?new=1";
   }
 
   function renderOutfit() {
@@ -998,13 +1008,13 @@
     const left = availableHatchSpecies().length;
     const newBtn = el.btnNewEgg;
     if (newBtn) {
-      newBtn.disabled = left <= 0;
-      newBtn.classList.toggle("done", left <= 0);
+      newBtn.disabled = !canStartNewEgg();
+      newBtn.classList.remove("done");
       const sub = newBtn.querySelector(".cne-txt i");
       if (sub) {
-        sub.textContent = left <= 0
-          ? "Você já encontrou todos os amiguinhos desta turma!"
-          : `Seu PIXEL atual fica pausado · ${left} novo${left === 1 ? "" : "s"} ainda`;
+        sub.textContent = left > 0
+          ? `Seu PIXEL atual fica pausado · ${left} novo${left === 1 ? "" : "s"} ainda`
+          : "Seu PIXEL atual fica pausado · pode nascer de novo (surpresa!)";
       }
     }
     el.collectionGrid.innerHTML = "";
@@ -1815,7 +1825,7 @@
     el.actor.classList.add("hatch-burst");
     flash();
     burst(140, 0.5);
-    if (window.PixelAudio) window.PixelAudio.cue("hatch");
+    if (window.PixelAudio) window.PixelAudio.cue("hatch", species?.id);
     await wait(500);
 
     const knewSpecies = wasChosenEgg;
@@ -1855,6 +1865,14 @@
       rain(["✨", "💖", "⭐"], 10);
       say(knewSpecies ? `Sou eu, ${state.name}! 💖` : `Surpresa! Eu sou ${state.name}! 💖`, 2600);
       if (window.PixelAudio && species) window.PixelAudio.speak(species.id, "happy", { force: true });
+      // Bebê recém-nascido: soluço (e às vezes pum / escapamento) é normal
+      setTimeout(() => {
+        if (state.phase !== "pet" || state.species !== species) return;
+        const vehicle = ["racer", "botcar", "rocket", "heli", "plane", "train", "tractor", "boat"].includes(species.id);
+        if (Math.random() < 0.65) {
+          say(vehicle ? "Prrrp… o escapamento! 💨" : "Hic! …desculpa, soluço de bebê 🍼", 2200);
+        }
+      }, 1400);
     }
     setTimeout(() => {
       const line = rolled.phrases.map((p) => p.text).join(" ");
@@ -1888,7 +1906,7 @@
       thirst: BASE_RATES.thirst * stage * (pr.thirst || 1) * (b.thirst || 1),
       hygiene: BASE_RATES.hygiene * stage * (pr.hygiene || 1) * (b.hygiene || 1),
       love: BASE_RATES.love * stage * (pr.love || 1) * (b.love || 1),
-      energy: state.sleeping ? (-5 / PACE) : BASE_RATES.energy * stage * (pr.energy || 1) * (b.energy || 1),
+      energy: state.sleeping ? -SLEEP_ENERGY_GAIN : BASE_RATES.energy * stage * (pr.energy || 1) * (b.energy || 1),
       health: 0,
     };
   }
@@ -2309,8 +2327,10 @@
       try {
         localStorage.removeItem("bichinho-hatch-bag");
         localStorage.removeItem("bichinho-audience");
+        localStorage.setItem("bichinho-force-new-egg", "1");
       } catch (_) {}
-      location.href = "index.html?new=1";
+      state.skipAutosave = true;
+      location.href = "./?new=1";
       return;
     }
     if ((e.key === "h" || e.key === "H") && state.phase === "pet") care("heal");
@@ -2332,11 +2352,9 @@
   el.btnCollection?.addEventListener("click", () => openCollection());
   el.closetClose?.addEventListener("click", closeCloset);
   el.collectionClose?.addEventListener("click", closeCollection);
-  el.btnNewEgg?.addEventListener("click", () => {
-    if (!canStartNewEgg()) {
-      say("Você já tem todos os PIXELs desta turma! 🎉", 2800);
-      return;
-    }
+  el.btnNewEgg?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     archiveAndNewEgg();
   });
 
@@ -2394,12 +2412,22 @@
     if (k) press(k), release(k);
   });
   addEventListener("resize", resizeFx);
-  addEventListener("pagehide", () => saveActivePet());
-  addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") saveActivePet(); });
+  addEventListener("pagehide", () => {
+    if (state.skipAutosave) return;
+    saveActivePet();
+  });
+  addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden" && !state.skipAutosave) saveActivePet();
+  });
 
   // ---------- Preview (?species=dino&stage=1&pose=plead&period=day) ----------
   function applyPreview() {
     const q = new URLSearchParams(location.search);
+    // Só gameplay (?new= / ?audience=) — não tratar como preview de pet
+    const keys = [...q.keys()];
+    if (!keys.length) return;
+    if (keys.every((k) => k === "new" || k === "audience")) return;
+
     const sp = SPECIES.find((s) => s.id === q.get("species"));
     if (q.get("hatch") != null) {
       state.forceSpecies = sp || null;
@@ -2424,7 +2452,6 @@
       renderEgg();
       return;
     }
-    if (!q.size) return;
     state.preview = { period: q.get("period") || "day" };
     // Snapshot estático do peek (?species=axolotl&egg=57)
     if (q.get("egg") != null || (sp && q.get("stage") == null && q.get("pose") == null && q.get("mood") == null)) {
@@ -2445,11 +2472,11 @@
     state.name = q.get("name") || pick((state.variant && state.species.variants?.[state.variant]?.names) || state.species.names);
     const rolled = rollStrongTraits(state.species);
     if (q.get("trait")) {
-      const keys = q.get("trait").split(",").filter((k) => TRAIT_LINES[k] || TRAIT_LINES_MACHINE[k]);
-      if (keys.length) {
-        rolled.strongTraits = keys;
+      const keysT = q.get("trait").split(",").filter((k) => TRAIT_LINES[k] || TRAIT_LINES_MACHINE[k]);
+      if (keysT.length) {
+        rolled.strongTraits = keysT;
         rolled.boosts = { hunger: 1, thirst: 1, hygiene: 1, love: 1, energy: 1 };
-        keys.forEach((k) => { rolled.boosts[k] = 2; });
+        keysT.forEach((k) => { rolled.boosts[k] = 2; });
       }
     }
     state.boosts = rolled.boosts;
@@ -2504,7 +2531,29 @@
   } else {
     state.audience = loadAudience();
   }
-  const forceNew = qBoot.get("new") != null;
+  let forceNew = qBoot.get("new") != null;
+  try {
+    if (localStorage.getItem("bichinho-force-new-egg") === "1") {
+      forceNew = true;
+      localStorage.removeItem("bichinho-force-new-egg");
+    }
+  } catch (_) { /* ignore */ }
+  if (forceNew) {
+    // Garante ovo fresco para esfregar (nunca retoma PIXEL pausado)
+    Object.assign(state, {
+      phase: "egg", stage: 0, species: null, name: "",
+      temp: 28, idealMs: 0, eggCrack: 0, pose: null,
+      forceSpecies: null, chosenEgg: false, petId: null,
+      sleeping: false, playing: false, busy: false, preview: null,
+    });
+    el.app.dataset.phase = "egg";
+    if (el.sideCare) el.sideCare.hidden = true;
+    if (el.btn1Icon) el.btn1Icon.textContent = "🤚";
+    if (el.btn1Text) el.btn1Text.textContent = "Esfregar";
+    renderActor();
+    renderEgg();
+    syncBiome();
+  }
   // Preview/hatch direto pula a pergunta
   if (state.preview || qBoot.get("hatch") != null || qBoot.get("species")) {
     if (!state.audience) state.audience = "both";

@@ -1,22 +1,22 @@
 {
-  "title": "Sons do jogo",
+  "title": "Tempos -30% + ovo novo",
   "percent": 100,
-  "step": 5,
-  "steps": 5,
-  "action": "Ambiente + vozes PIXEL · V0.1.44",
-  "updatedAt": "2026-10-01T18:44:22.755Z",
+  "step": 3,
+  "steps": 3,
+  "action": "PACE 2.1 + Pegar ovo sempre · V0.1.49",
+  "updatedAt": "2026-10-01T22:12:20.620Z",
   "checklist": [
     {
       "done": true,
-      "text": "Sons ambiente por bioma"
+      "text": "Todos os tempos -30%"
     },
     {
       "done": true,
-      "text": "Vozes por humor e tipo de PIXEL"
+      "text": "Pegar ovo novo sempre ativo"
     },
     {
       "done": true,
-      "text": "SFX de ações e botão mute"
+      "text": "Push git"
     }
   ]
 }
